@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { LOGO_DATA } from '@/logoData';
 import { isFirebaseConfigured } from '@/firebaseConfig';
+import { isSupabaseConfigured } from '@/lib/supabaseClient';
 
 // ─────────────────────────────────────────
 //  TYPES
@@ -418,11 +419,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Firebase integration
+    // Supabase DB integration — load remote data after local data is applied
+    if (isSupabaseConfigured()) {
+      loadFromSupabaseDB();
+    }
+
+    // Firebase integration (secondary, only when Firebase is configured)
     if (isFirebaseConfigured()) {
       loadFromFirebase();
     }
   }, []);
+
+  const loadFromSupabaseDB = async () => {
+    try {
+      const { loadFromSupabaseDB: load } = await import('@/lib/supabaseDataService');
+      const remote = await load();
+      if (remote) {
+        const merged = deepMerge(defaultData, remote as Partial<AppData>);
+        setDataState(merged);
+        applyCssVars(merged);
+        // Also update localStorage so offline fallback stays in sync
+        localStorage.setItem('dasman_scout_data_v2', JSON.stringify(merged));
+      }
+    } catch (err) {
+      console.warn('Supabase DB load failed:', err);
+    }
+  };
 
   const loadFromFirebase = async () => {
     try {
@@ -447,6 +469,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       localStorage.setItem('dasman_scout_data_v2', JSON.stringify(d));
+      // Save to Supabase DB so all devices/users see the same content
+      if (isSupabaseConfigured()) {
+        import('@/lib/supabaseDataService')
+          .then(({ saveToSupabaseDB }) => saveToSupabaseDB(d))
+          .catch(console.warn);
+      }
       // Save to Firestore in background if configured
       if (isFirebaseConfigured()) {
         import('@/lib/firestoreService')
