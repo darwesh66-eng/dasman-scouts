@@ -3,7 +3,7 @@ import { useApp } from '@/contexts/AppContext';
 
 export default function LoginPage({ setPage }: { setPage: (p: string) => void }) {
   const { login, t, lang, data } = useApp();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -12,11 +12,26 @@ export default function LoginPage({ setPage }: { setPage: (p: string) => void })
     e.preventDefault();
     setLoading(true);
     setError('');
-    await new Promise((r) => setTimeout(r, 300));
-    const ok = login(username, password);
+    const { error: loginError } = await login(email.trim(), password);
     setLoading(false);
-    if (ok) setPage('admin');
-    else setError(t('اسم المستخدم أو كلمة المرور غير صحيحة', 'Invalid username or password'));
+    if (!loginError) {
+      setPage('admin');
+    } else {
+      // Supabase returns English error messages; translate the common ones
+      if (loginError.toLowerCase().includes('invalid') || loginError.toLowerCase().includes('credentials')) {
+        setError(t('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'Invalid email or password'));
+      } else {
+        setError(loginError);
+      }
+    }
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '11px 14px', borderRadius: 10,
+    border: '1.5px solid var(--border)', fontSize: 15,
+    outline: 'none', fontFamily: 'Cairo,sans-serif',
+    color: 'var(--text)', background: 'var(--surface-2)',
+    transition: 'border-color 0.2s',
   };
 
   return (
@@ -54,21 +69,17 @@ export default function LoginPage({ setPage }: { setPage: (p: string) => void })
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: 'var(--text)' }}>
-              {t('اسم المستخدم', 'Username')}
+              {t('البريد الإلكتروني', 'Email')}
             </label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="username"
-              style={{
-                width: '100%', padding: '11px 14px', borderRadius: 10,
-                border: '1.5px solid var(--border)', fontSize: 15,
-                outline: 'none', fontFamily: 'Cairo,sans-serif',
-                color: 'var(--text)', background: 'var(--surface-2)',
-                transition: 'border-color 0.2s',
-              }}
+              autoComplete="email"
+              dir="ltr"
+              placeholder="admin@example.com"
+              style={inputStyle}
               onFocus={(e) => (e.target.style.borderColor = 'var(--primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
             />
@@ -83,13 +94,7 @@ export default function LoginPage({ setPage }: { setPage: (p: string) => void })
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              style={{
-                width: '100%', padding: '11px 14px', borderRadius: 10,
-                border: '1.5px solid var(--border)', fontSize: 15,
-                outline: 'none', fontFamily: 'Cairo,sans-serif',
-                color: 'var(--text)', background: 'var(--surface-2)',
-                transition: 'border-color 0.2s',
-              }}
+              style={inputStyle}
               onFocus={(e) => (e.target.style.borderColor = 'var(--primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
             />

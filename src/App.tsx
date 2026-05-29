@@ -59,7 +59,7 @@ function PageLoader() {
 }
 
 export default function App() {
-  const { firebaseReady, isAdmin, t, data } = useApp();
+  const { firebaseReady, isAdmin, authReady, t, data } = useApp();
   const [page, setPageState] = useState<Page>(getInitialPage);
   const [splashDone, setSplashDone] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -147,8 +147,14 @@ export default function App() {
       case 'calendar':     return <CalendarPage />;
       case 'achievements': return <AchievementsPage />;
       case 'join':         return <JoinPage setPage={setPage} />;
-      case 'login':        return <LoginPage setPage={setPage} />;
-      case 'admin':        return isAdmin ? <AdminPage setPage={setPage} /> : <LoginPage setPage={setPage} />;
+      case 'login':
+        // If already authenticated, jump straight to the admin panel
+        if (!authReady) return <PageLoader />;
+        return isAdmin ? <AdminPage setPage={setPage} /> : <LoginPage setPage={setPage} />;
+      case 'admin':
+        // Wait for auth check before deciding — avoids flashing the login page
+        if (!authReady) return <PageLoader />;
+        return isAdmin ? <AdminPage setPage={setPage} /> : <LoginPage setPage={setPage} />;
       default:             return <HomePage setPage={setPage} />;
     }
   };

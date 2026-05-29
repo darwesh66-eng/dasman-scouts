@@ -8,7 +8,7 @@ import { getAnalytics, lastNDays, clearAnalytics } from '@/lib/analytics';
 import RichEditor from '@/components/RichEditor';
 import type {
   Group, Leader, Activity, ActivityMedia, GalleryItem, ArchiveYear,
-  NewsItem, Achievement, CalendarEvent, HomeVideo, AdminUser, JoinRequest
+  NewsItem, Achievement, CalendarEvent, HomeVideo, JoinRequest
 } from '@/contexts/AppContext';
 
 const ScoutsSection = lazy(() => import('./admin/ScoutsSection'));
@@ -935,56 +935,6 @@ function SettingsSec() {
   );
 }
 
-function AdminsSec() {
-  const { data, setData, currentUser, t } = useApp();
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ username: '', password: '' });
-
-  const addAdmin = () => {
-    if (!form.username || !form.password) return;
-    setData({ ...data, admins: [...data.admins, { ...form, isMain: false }] });
-    setForm({ username: '', password: '' });
-    setAdding(false);
-  };
-
-  return (
-    <div style={{ maxWidth: 560 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-        {data.admins.map((admin, i) => (
-          <div key={i} style={{ background: 'var(--surface)', borderRadius: 12, padding: '14px 18px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>👤</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, fontFamily: 'Cairo,sans-serif' }}>{admin.username}</div>
-              {admin.isMain && <span style={{ fontSize: 11, color: 'var(--primary)', fontWeight: 700, fontFamily: 'Jost,sans-serif' }}>Main Admin</span>}
-            </div>
-            {!admin.isMain && admin.username !== currentUser?.username && (
-              <button
-                onClick={() => { if (confirm(t('حذف هذا المدير؟', 'Delete this admin?'))) setData({ ...data, admins: data.admins.filter((_, j) => j !== i) }); }}
-                style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid #fca5a5', background: 'none', cursor: 'pointer', fontSize: 12, color: '#dc2626', fontWeight: 600, fontFamily: 'Cairo,sans-serif' }}
-              >
-                {t('حذف', 'Delete')}
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-      {adding ? (
-        <div style={{ background: 'var(--surface)', borderRadius: 14, padding: 20, border: '1px solid var(--border)' }}>
-          <Input label={t('اسم المستخدم', 'Username')} value={form.username} onChange={(v) => setForm({ ...form, username: v })} />
-          <Input label={t('كلمة المرور', 'Password')} value={form.password} onChange={(v) => setForm({ ...form, password: v })} type="password" />
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={addAdmin} style={{ flex: 1, padding: '10px', borderRadius: 10, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', fontSize: 14, fontWeight: 700, fontFamily: 'Cairo,sans-serif' }}>{t('إضافة', 'Add')}</button>
-            <button onClick={() => setAdding(false)} style={{ flex: 1, padding: '10px', borderRadius: 10, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 14, fontFamily: 'Cairo,sans-serif' }}>{t('إلغاء', 'Cancel')}</button>
-          </div>
-        </div>
-      ) : (
-        <button onClick={() => setAdding(true)} style={{ padding: '9px 20px', borderRadius: 10, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', fontSize: 14, fontWeight: 700, fontFamily: 'Cairo,sans-serif' }}>
-          + {t('إضافة مدير', 'Add Admin')}
-        </button>
-      )}
-    </div>
-  );
-}
 
 function ScoutOfMonthSec() {
   const { data, setData, t, lang } = useApp();
@@ -1593,11 +1543,10 @@ const SECTIONS = [
   { id: 'welcome', icon: '👋', ar: 'رسالة الترحيب', en: 'Welcome Popup' },
   { id: 'colors', icon: '🎨', ar: 'الألوان', en: 'Colors' },
   { id: 'settings', icon: '⚙️', ar: 'الإعدادات', en: 'Settings' },
-  { id: 'admins', icon: '🔐', ar: 'المديرون', en: 'Admins' },
 ];
 
 export default function AdminPage({ setPage }: { setPage: (p: string) => void }) {
-  const { data, lang, t, logout, currentUser } = useApp();
+  const { data, lang, t, logout, adminEmail } = useApp();
   const [section, setSection] = useState('overview');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -1625,7 +1574,6 @@ export default function AdminPage({ setPage }: { setPage: (p: string) => void })
       case 'welcome': return <WelcomeSec />;
       case 'colors': return <ColorsSec />;
       case 'settings': return <SettingsSec />;
-      case 'admins': return <AdminsSec />;
       default: return null;
     }
   };
@@ -1647,7 +1595,7 @@ export default function AdminPage({ setPage }: { setPage: (p: string) => void })
             {t(data.siteName.ar, data.siteName.en)}
           </div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', fontFamily: 'Jost,sans-serif', marginTop: 2 }}>
-            {currentUser?.username}
+            {adminEmail}
           </div>
         </div>
 
@@ -1676,7 +1624,7 @@ export default function AdminPage({ setPage }: { setPage: (p: string) => void })
           <button onClick={() => setPage('home')} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.2)', background: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif' }}>
             👁️ {t('عرض الموقع', 'View Site')}
           </button>
-          <button onClick={() => { logout(); setPage('home'); }} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid rgba(255,100,100,0.3)', background: 'none', color: 'rgba(255,120,120,0.8)', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif' }}>
+          <button onClick={() => logout().then(() => setPage('home'))} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid rgba(255,100,100,0.3)', background: 'none', color: 'rgba(255,120,120,0.8)', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif' }}>
             🚪 {t('تسجيل الخروج', 'Logout')}
           </button>
         </div>

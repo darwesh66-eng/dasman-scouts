@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { LOGO_DATA } from '@/logoData';
 import { isFirebaseConfigured } from '@/firebaseConfig';
-import { isSupabaseConfigured } from '@/lib/supabaseClient';
+import { isSupabaseConfigured, getSupabase } from '@/lib/supabaseClient';
 
 // ─────────────────────────────────────────
 //  TYPES
@@ -73,11 +73,6 @@ export interface ArchiveYear {
   descriptionEn: string;
   coverPhoto: string;
   items: GalleryItem[];
-}
-export interface AdminUser {
-  username: string;
-  password: string;
-  isMain: boolean;
 }
 export interface NewsItem {
   id: string;
@@ -181,7 +176,6 @@ export interface MediaSettings {
   galleryFit: 'cover' | 'contain' | 'natural';
 }
 export interface AppData {
-  admins: AdminUser[];
   heroImages: string[];
   about: {
     ar: { history: string; mission: string; vision: string };
@@ -213,7 +207,6 @@ export interface AppData {
 //  DEFAULT DATA
 // ─────────────────────────────────────────
 const defaultData: AppData = {
-  admins: [{ username: 'darwesh2511', password: '97814592', isMain: true }],
   heroImages: [],
   about: {
     ar: {
@@ -372,9 +365,12 @@ interface AppContextType {
   data: AppData;
   setData: (d: AppData) => void;
   isAdmin: boolean;
-  currentUser: AdminUser | null;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
+  /** Email of the currently authenticated admin, or null when logged out. */
+  adminEmail: string | null;
+  /** True once the Supabase auth session check has completed (avoids login-page flash). */
+  authReady: boolean;
+  login: (email: string, password: string) => Promise<{ error: string | null }>;
+  logout: () => Promise<void>;
   t: (ar: string, en: string) => string;
   firebaseReady: boolean;
 }
@@ -387,12 +383,17 @@ const AppContext = createContext<AppContextType | null>(null);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>('ar');
   const [dataState, setDataState] = useState<AppData>(defaultData);
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  // authReady starts true when Supabase is not configured (no check needed)
+  const [authReady, setAuthReady] = useState(!isSupabaseConfigured());
   const [firebaseReady, setFirebaseReady] = useState(!isFirebaseConfigured());
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Stores the unsubscribe function for the Supabase auth listener
+  const authUnsubRef = useRef<(() => void) | null>(null);
 
-  // Load from localStorage on mount
   useEffect(() => {
+    // ── 1. Load app data from localStorage ───────────────────────
     const stored = localStorage.getItem('dasman_scout_data_v2');
     if (stored) {
       try {
@@ -405,29 +406,46 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Load lang preference
+    // ── 2. Load lang preference ───────────────────────────────────
     const storedLang = localStorage.getItem('dasman_lang') as Lang | null;
     if (storedLang === 'ar' || storedLang === 'en') setLangState(storedLang);
 
-    // Restore session
-    const session = sessionStorage.getItem('dasman_admin');
-    if (session) {
-      try {
-        setCurrentUser(JSON.parse(session));
-      } catch {
-        // ignore
-      }
-    }
-
-    // Supabase DB integration — load remote data after local data is applied
+    // ── 3. Supabase Auth — check session + subscribe to changes ──
     if (isSupabaseConfigured()) {
+      getSupabase().then((sb) => {
+        if (!sb) {
+          setAuthReady(true);
+          return;
+        }
+
+        // Check for an existing persisted session (stored by Supabase in localStorage)
+        sb.auth.getSession().then(({ data: { session } }) => {
+          setIsAdmin(!!session);
+          setAdminEmail(session?.user?.email ?? null);
+          setAuthReady(true);
+        });
+
+        // React to any future auth state changes (login, logout, token refresh)
+        const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
+          setIsAdmin(!!session);
+          setAdminEmail(session?.user?.email ?? null);
+        });
+
+        authUnsubRef.current = () => subscription.unsubscribe();
+      });
+
+      // ── 4. Load app content from Supabase DB ─────────────────────
       loadFromSupabaseDB();
     }
 
-    // Firebase integration (secondary, only when Firebase is configured)
+    // ── 5. Firebase integration ───────────────────────────────────
     if (isFirebaseConfigured()) {
       loadFromFirebase();
     }
+
+    return () => {
+      authUnsubRef.current?.();
+    };
   }, []);
 
   const loadFromSupabaseDB = async () => {
@@ -492,23 +510,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(
-    (username: string, password: string): boolean => {
-      const user = dataState.admins.find(
-        (a) => a.username === username && a.password === password,
-      );
-      if (user) {
-        setCurrentUser(user);
-        sessionStorage.setItem('dasman_admin', JSON.stringify(user));
-        return true;
+    async (email: string, password: string): Promise<{ error: string | null }> => {
+      try {
+        const sb = await getSupabase();
+        if (!sb) return { error: 'Supabase is not configured' };
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) return { error: error.message };
+        // onAuthStateChange fires automatically and updates isAdmin / adminEmail
+        return { error: null };
+      } catch (err) {
+        return { error: err instanceof Error ? err.message : 'Login failed' };
       }
-      return false;
     },
-    [dataState.admins],
+    [],
   );
 
-  const logout = useCallback(() => {
-    setCurrentUser(null);
-    sessionStorage.removeItem('dasman_admin');
+  const logout = useCallback(async (): Promise<void> => {
+    const sb = await getSupabase();
+    if (sb) {
+      await sb.auth.signOut();
+    }
+    // onAuthStateChange fires and sets isAdmin=false, adminEmail=null
   }, []);
 
   const t = useCallback(
@@ -523,8 +545,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setLang,
         data: dataState,
         setData,
-        isAdmin: currentUser !== null,
-        currentUser,
+        isAdmin,
+        adminEmail,
+        authReady,
         login,
         logout,
         t,

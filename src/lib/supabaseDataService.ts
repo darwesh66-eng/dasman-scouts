@@ -81,9 +81,11 @@ export async function saveToSupabaseDB(appData: AppData): Promise<void> {
 
     // Build the row as a typed local object, then cast through unknown so
     // the upsert() call does not reject `id` as an unknown property.
-    // Strip joinRequests — those live in the dedicated join_requests table now.
+    // Strip fields that must not be stored in the shared app_config row.
+    // join_requests live in their own table; admins are managed by Supabase Auth.
     const safeData = JSON.parse(JSON.stringify(appData)) as Partial<AppData>;
     delete (safeData as Record<string, unknown>).joinRequests;
+    delete (safeData as Record<string, unknown>).admins;
     const row: ConfigRow = {
       id: ROW_ID,
       data: safeData,
