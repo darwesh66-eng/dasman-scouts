@@ -133,6 +133,8 @@ export interface HomeVideo {
   url: string;
   titleAr: string;
   titleEn: string;
+  descriptionAr?: string;
+  descriptionEn?: string;
 }
 export interface ScoutOfMonth {
   scoutId: string;

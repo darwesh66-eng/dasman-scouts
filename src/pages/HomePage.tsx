@@ -93,8 +93,16 @@ function ActivityVideo({ id, url, thumb, caption }: { id: string; url: string; t
 }
 
 // ─── HOME VIDEO CARD ─────────────────────────────────────────
+
+/** Convert an Instagram post/reel URL to its embeddable iframe URL. */
+function getIgEmbedUrl(url: string): string | null {
+  const m = url.match(/instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);
+  if (!m) return null;
+  return `https://www.instagram.com/${m[1]}/${m[2]}/embed/`;
+}
+
 function VideoCard({ video }: { video: import('@/contexts/AppContext').HomeVideo }) {
-  const { lang } = useApp();
+  const { lang, t } = useApp();
   const [src, setSrc] = useState(video.url);
   const [playing, setPlaying] = useState(false);
 
@@ -105,39 +113,86 @@ function VideoCard({ video }: { video: import('@/contexts/AppContext').HomeVideo
   }, [video]);
 
   const getYtId = (url: string) => url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/)?.[1];
-  const ytId = video.type === 'youtube' ? getYtId(src) : null;
+  const ytId    = video.type === 'youtube'   ? getYtId(src)    : null;
+  const igEmbed = video.type === 'instagram' ? getIgEmbedUrl(src) : null;
+
+  const iframeStyle: React.CSSProperties = {
+    position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none',
+  };
 
   return (
     <div style={{ minWidth: 280, maxWidth: 320, flexShrink: 0, scrollSnapAlign: 'start' }}>
       <TiltCard style={{ overflow: 'hidden' }}>
-        <div style={{ position: 'relative', paddingBottom: '56.25%', background: '#0a0a1a', cursor: 'pointer' }} onClick={() => setPlaying(true)}>
+        {/* ── Video / Thumbnail area ── */}
+        <div
+          style={{ position: 'relative', paddingBottom: '56.25%', background: '#0a0a1a', cursor: playing ? 'default' : 'pointer' }}
+          onClick={() => { if (!playing) setPlaying(true); }}
+        >
           {playing ? (
             video.type === 'youtube' && ytId ? (
               <iframe
                 src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
+                style={iframeStyle}
                 allow="autoplay; encrypted-media"
                 allowFullScreen
               />
+            ) : video.type === 'instagram' ? (
+              igEmbed ? (
+                <iframe
+                  src={igEmbed}
+                  style={iframeStyle}
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                />
+              ) : (
+                /* URL didn't match expected Instagram format */
+                <div style={{ ...iframeStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f87171', fontSize: 13, fontFamily: 'Cairo,sans-serif' }}>
+                  {t('رابط إنستغرام غير صالح', 'Invalid Instagram URL')}
+                </div>
+              )
             ) : src ? (
-              <video src={src} controls autoPlay style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+              <video src={src} controls autoPlay style={{ ...iframeStyle, objectFit: 'cover' }} />
             ) : null
           ) : (
+            /* ── Thumbnail (not playing) ── */
             <>
               {video.type === 'youtube' && ytId ? (
-                <img src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                <img
+                  src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
+                  alt=""
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                  loading="lazy"
+                />
+              ) : video.type === 'instagram' ? (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, background: 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)' }}>
+                  📸
+                </div>
               ) : (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, background: 'linear-gradient(135deg,#1a1a3e,#0a0a1a)' }}>🎬</div>
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, background: 'linear-gradient(135deg,#1a1a3e,#0a0a1a)' }}>
+                  🎬
+                </div>
               )}
+              {/* Play button overlay */}
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.25)' }}>
                 <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>▶</div>
               </div>
             </>
           )}
         </div>
-        {(video.titleAr || video.titleEn) && (
-          <div style={{ padding: '14px 16px', fontSize: 14, fontWeight: 600, fontFamily: 'Cairo,sans-serif', color: 'var(--text)' }}>
-            {lang === 'ar' ? video.titleAr : video.titleEn}
+
+        {/* ── Title + Description ── */}
+        {(video.titleAr || video.titleEn || video.descriptionAr || video.descriptionEn) && (
+          <div style={{ padding: '14px 16px' }}>
+            {(video.titleAr || video.titleEn) && (
+              <div style={{ fontSize: 14, fontWeight: 600, fontFamily: 'Cairo,sans-serif', color: 'var(--text)', marginBottom: (video.descriptionAr || video.descriptionEn) ? 6 : 0 }}>
+                {lang === 'ar' ? video.titleAr : video.titleEn}
+              </div>
+            )}
+            {(video.descriptionAr || video.descriptionEn) && (
+              <div style={{ fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)', lineHeight: 1.55 }}>
+                {lang === 'ar' ? (video.descriptionAr ?? '') : (video.descriptionEn ?? '')}
+              </div>
+            )}
           </div>
         )}
       </TiltCard>

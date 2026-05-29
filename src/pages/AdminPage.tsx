@@ -1043,23 +1043,68 @@ function HomeVideosSec() {
   const { data, setData, t, lang } = useApp();
   const [uploading, setUploading] = useState(false);
 
-  const addYouTube = () => {
-    const url = prompt('YouTube URL:');
-    if (!url) return;
-    const titleAr = prompt(t('عنوان بالعربي', 'Title (Arabic):')) ?? '';
-    const titleEn = prompt('Title (English):') ?? '';
-    setData({ ...data, homeVideos: [...data.homeVideos, { id: `hv_${Date.now()}`, type: 'youtube', url, titleAr, titleEn }] });
+  // ── Form state ───────────────────────────────────────────────
+  type VideoForm = {
+    /** Empty string = new video being added; non-empty = id of video being edited */
+    id: string;
+    isNew: boolean;
+    type: 'youtube' | 'instagram' | 'upload';
+    url: string;
+    titleAr: string;
+    titleEn: string;
+    descriptionAr: string;
+    descriptionEn: string;
   };
 
-  const addInstagram = () => {
-    const url = prompt('Instagram URL:');
-    if (!url) return;
-    setData({ ...data, homeVideos: [...data.homeVideos, { id: `hv_${Date.now()}`, type: 'instagram', url, titleAr: '', titleEn: '' }] });
+  const emptyForm = (type: VideoForm['type']): VideoForm => ({
+    id: '', isNew: true, type, url: '', titleAr: '', titleEn: '', descriptionAr: '', descriptionEn: '',
+  });
+
+  const [form, setForm] = useState<VideoForm | null>(null);
+
+  const upd = (k: keyof VideoForm, v: string) =>
+    setForm((f) => (f ? { ...f, [k]: v } : f));
+
+  // Open edit form pre-filled with existing video data
+  const startEdit = (v: HomeVideo) => {
+    setForm({
+      id: v.id,
+      isNew: false,
+      type: v.type,
+      url: v.url,
+      titleAr: v.titleAr,
+      titleEn: v.titleEn,
+      descriptionAr: v.descriptionAr ?? '',
+      descriptionEn: v.descriptionEn ?? '',
+    });
   };
 
-  const addUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Commit the form — add new or update existing
+  const saveForm = () => {
+    if (!form) return;
+    const video: HomeVideo = {
+      id: form.isNew ? (form.id || `hv_${Date.now()}`) : form.id,
+      type: form.type,
+      url: form.url,
+      titleAr: form.titleAr,
+      titleEn: form.titleEn,
+      descriptionAr: form.descriptionAr,
+      descriptionEn: form.descriptionEn,
+    };
+    setData({
+      ...data,
+      homeVideos: form.isNew
+        ? [...data.homeVideos, video]
+        : data.homeVideos.map((v) => (v.id === video.id ? video : v)),
+    });
+    setForm(null);
+  };
+
+  // File upload — upload first, then show metadata form
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = ''; // allow same file to be re-selected if needed
     setUploading(true);
     try {
       const id = `hv_${Date.now()}`;
@@ -1075,32 +1120,136 @@ function HomeVideosSec() {
       } else {
         await storeVideo(id, file);
       }
-      setData({ ...data, homeVideos: [...data.homeVideos, { id, type: 'upload', url, titleAr: '', titleEn: '' }] });
-    } catch { }
+      // Open the metadata form with the pre-assigned id; user fills in titles/descriptions then saves
+      setForm({ id, isNew: true, type: 'upload', url, titleAr: '', titleEn: '', descriptionAr: '', descriptionEn: '' });
+    } catch { /* ignore */ }
     setUploading(false);
+  };
+
+  const btnStyle: React.CSSProperties = {
+    padding: '9px 18px', borderRadius: 10, border: '1px solid var(--border)',
+    background: 'none', cursor: 'pointer', fontSize: 14, fontFamily: 'Cairo,sans-serif',
   };
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
-        <button onClick={addYouTube} style={{ padding: '9px 18px', borderRadius: 10, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 14, fontFamily: 'Cairo,sans-serif' }}>+ YouTube</button>
-        <button onClick={addInstagram} style={{ padding: '9px 18px', borderRadius: 10, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 14, fontFamily: 'Cairo,sans-serif' }}>+ Instagram</button>
-        <label style={{ padding: '9px 18px', borderRadius: 10, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 14, fontFamily: 'Cairo,sans-serif' }}>
-          {uploading ? t('جاري...', 'Uploading...') : `+ ${t('رفع فيديو', 'Upload Video')}`}
-          <input type="file" accept="video/*" onChange={addUpload} style={{ display: 'none' }} />
-        </label>
-      </div>
+      {/* ── Add buttons — hidden while a form is open ── */}
+      {!form && (
+        <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
+          <button onClick={() => setForm(emptyForm('youtube'))} style={btnStyle}>+ YouTube</button>
+          <button onClick={() => setForm(emptyForm('instagram'))} style={btnStyle}>+ Instagram</button>
+          <label style={{ ...btnStyle, display: 'inline-flex', alignItems: 'center' }}>
+            {uploading ? t('جاري الرفع…', 'Uploading…') : `+ ${t('رفع فيديو', 'Upload Video')}`}
+            <input type="file" accept="video/*" onChange={handleFileUpload} style={{ display: 'none' }} disabled={uploading} />
+          </label>
+        </div>
+      )}
+
+      {/* ── Add / Edit form ── */}
+      {form && (
+        <div style={{ background: 'var(--surface-2)', borderRadius: 14, border: '1px solid var(--border)', padding: 20, marginBottom: 20 }}>
+          {/* Form heading */}
+          <div style={{ fontSize: 14, fontWeight: 700, fontFamily: 'Cairo,sans-serif', color: 'var(--primary)', marginBottom: 14 }}>
+            {!form.isNew
+              ? t('تعديل الفيديو', 'Edit Video')
+              : form.type === 'youtube'
+                ? t('إضافة فيديو YouTube', 'Add YouTube Video')
+                : form.type === 'instagram'
+                  ? t('إضافة فيديو Instagram', 'Add Instagram Video')
+                  : t('تفاصيل الفيديو المرفوع', 'Uploaded Video Details')}
+          </div>
+
+          {/* URL field — YouTube and Instagram only; upload URL is set automatically */}
+          {form.type !== 'upload' && (
+            <Input
+              label={form.type === 'youtube' ? 'YouTube URL' : 'Instagram URL (post or reel)'}
+              value={form.url}
+              onChange={(v) => upd('url', v)}
+              placeholder={
+                form.type === 'youtube'
+                  ? 'https://www.youtube.com/watch?v=...'
+                  : 'https://www.instagram.com/p/... or /reel/...'
+              }
+            />
+          )}
+
+          {/* Upload status indicator */}
+          {form.type === 'upload' && (
+            <div style={{ fontSize: 12, fontFamily: 'Cairo,sans-serif', marginBottom: 12, color: form.url ? '#16a34a' : 'var(--text-muted)' }}>
+              {form.url
+                ? `✅ ${t('تم رفع الفيديو — أضف التفاصيل ثم احفظ', 'Video uploaded — add details then save')}`
+                : `⏳ ${t('جاري الرفع…', 'Uploading…')}`}
+            </div>
+          )}
+
+          {/* Metadata fields — 2-column grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <Input label={t('العنوان بالعربي', 'Arabic Title')}       value={form.titleAr}       onChange={(v) => upd('titleAr', v)} />
+            <Input label="English Title"                              value={form.titleEn}       onChange={(v) => upd('titleEn', v)} />
+            <Input label={t('الوصف بالعربي', 'Arabic Description')}   value={form.descriptionAr} onChange={(v) => upd('descriptionAr', v)} />
+            <Input label="English Description"                        value={form.descriptionEn} onChange={(v) => upd('descriptionEn', v)} />
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+            <button
+              onClick={saveForm}
+              disabled={form.type !== 'upload' && !form.url.trim()}
+              style={{
+                padding: '9px 22px', borderRadius: 10, border: 'none',
+                background: 'var(--primary)', color: '#fff', cursor: 'pointer',
+                fontSize: 14, fontWeight: 700, fontFamily: 'Cairo,sans-serif',
+                opacity: (form.type !== 'upload' && !form.url.trim()) ? 0.5 : 1,
+              }}
+            >
+              {t('حفظ', 'Save')}
+            </button>
+            <button
+              onClick={() => setForm(null)}
+              style={{ padding: '9px 18px', borderRadius: 10, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 14, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}
+            >
+              {t('إلغاء', 'Cancel')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Existing video cards ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 16 }}>
         {data.homeVideos.map((v) => (
           <div key={v.id} style={{ background: 'var(--surface)', borderRadius: 14, border: '1px solid var(--border)', overflow: 'hidden' }}>
-            <div style={{ height: 130, background: '#0a0a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>
+            {/* Thumbnail icon */}
+            <div style={{ height: 130, background: v.type === 'instagram' ? 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)' : '#0a0a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>
               {v.type === 'youtube' ? '▶' : v.type === 'instagram' ? '📸' : '🎬'}
             </div>
-            <div style={{ padding: '12px 16px', fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}>
-              {v.type} · {(lang === 'ar' ? v.titleAr : v.titleEn) || t('بلا عنوان', 'Untitled')}
+            {/* Title row */}
+            <div style={{ padding: '10px 16px 4px', fontSize: 13, fontFamily: 'Cairo,sans-serif' }}>
+              <span style={{ fontWeight: 600, color: 'var(--text)', textTransform: 'capitalize' }}>{v.type}</span>
+              {' · '}
+              <span style={{ color: 'var(--text-muted)' }}>
+                {(lang === 'ar' ? v.titleAr : v.titleEn) || t('بلا عنوان', 'Untitled')}
+              </span>
             </div>
-            <div style={{ padding: '0 16px 12px' }}>
-              <button onClick={() => setData({ ...data, homeVideos: data.homeVideos.filter((x) => x.id !== v.id) })} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid #fca5a5', background: 'none', cursor: 'pointer', fontSize: 12, color: '#dc2626', fontWeight: 600, fontFamily: 'Cairo,sans-serif' }}>{t('حذف', 'Delete')}</button>
+            {/* Description preview (one line) */}
+            {(v.descriptionAr || v.descriptionEn) && (
+              <div style={{ padding: '0 16px 6px', fontSize: 12, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {lang === 'ar' ? v.descriptionAr : v.descriptionEn}
+              </div>
+            )}
+            {/* Actions */}
+            <div style={{ padding: '0 16px 12px', display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => startEdit(v)}
+                style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 12, color: 'var(--primary)', fontWeight: 600, fontFamily: 'Cairo,sans-serif' }}
+              >
+                {t('تعديل', 'Edit')}
+              </button>
+              <button
+                onClick={() => setData({ ...data, homeVideos: data.homeVideos.filter((x) => x.id !== v.id) })}
+                style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid #fca5a5', background: 'none', cursor: 'pointer', fontSize: 12, color: '#dc2626', fontWeight: 600, fontFamily: 'Cairo,sans-serif' }}
+              >
+                {t('حذف', 'Delete')}
+              </button>
             </div>
           </div>
         ))}

@@ -112,7 +112,7 @@ export default function Navbar({ currentPage, setPage, onSearch, darkMode = fals
       </button>
 
       {/* Desktop nav links */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflowX: 'auto' }} className="hidden lg:flex">
+      <div style={{ alignItems: 'center', gap: 4, flex: 1, overflowX: 'auto' }} className="hidden lg:flex">
         {NAV_LINKS.map((link) => (
           <button
             key={link.page}
@@ -206,7 +206,7 @@ export default function Navbar({ currentPage, setPage, onSearch, darkMode = fals
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           style={{
-            display: 'none', padding: '6px', border: 'none',
+            padding: '6px', border: 'none',
             background: 'none', cursor: 'pointer', color: hamburgClr, transition: 'color 0.3s',
           }}
           className="block lg:hidden"
