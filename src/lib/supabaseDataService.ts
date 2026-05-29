@@ -81,9 +81,12 @@ export async function saveToSupabaseDB(appData: AppData): Promise<void> {
 
     // Build the row as a typed local object, then cast through unknown so
     // the upsert() call does not reject `id` as an unknown property.
+    // Strip joinRequests — those live in the dedicated join_requests table now.
+    const safeData = JSON.parse(JSON.stringify(appData)) as Partial<AppData>;
+    delete (safeData as Record<string, unknown>).joinRequests;
     const row: ConfigRow = {
       id: ROW_ID,
-      data: JSON.parse(JSON.stringify(appData)) as Partial<AppData>,
+      data: safeData,
       updated_at: new Date().toISOString(),
     };
 

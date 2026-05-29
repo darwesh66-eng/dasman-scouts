@@ -207,7 +207,6 @@ export interface AppData {
   schoolUrl: string;
   scoutFieldsConfig: { grade: boolean };
   welcomePopup: WelcomePopup;
-  joinRequests: JoinRequest[];
 }
 
 // ─────────────────────────────────────────
@@ -313,7 +312,6 @@ const defaultData: AppData = {
   instagram: 'https://www.instagram.com/scouts_dasman/',
   schoolUrl: 'https://www.dbs.edu.kw/',
   scoutFieldsConfig: { grade: false },
-  joinRequests: [],
   welcomePopup: {
     enabled: false,
     titleAr: 'أهلاً وسهلاً بكم 👋',

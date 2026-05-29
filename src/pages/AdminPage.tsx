@@ -85,7 +85,7 @@ function OverviewSec({ setSection }: { setSection: (s: string) => void }) {
     { icon: '📷', label: t('المعرض', 'Gallery'), value: data.gallery.length, section: 'gallery' },
     { icon: '🏆', label: t('الإنجازات', 'Achievements'), value: data.achievements.length, section: 'achievements' },
     { icon: '🗓️', label: t('الفعاليات', 'Events'), value: data.events.length, section: 'calendar' },
-    { icon: '📋', label: t('طلبات الانضمام', 'Join Requests'), value: (data.joinRequests || []).filter(r => r.status === 'pending').length, section: 'joinrequests' },
+    { icon: '📋', label: t('طلبات الانضمام', 'Join Requests'), value: '—', section: 'joinrequests' },
   ];
 
   // Export data as JSON file
@@ -1424,18 +1424,44 @@ function WelcomeSec() {
 
 // ─── JOIN REQUESTS SECTION ───────────────────────────────────
 function JoinRequestsSec() {
-  const { data, setData, t, lang } = useApp();
-  const requests: JoinRequest[] = data.joinRequests || [];
+  const { t, lang, data } = useApp();
+  const [requests, setRequests] = React.useState<JoinRequest[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [loadError, setLoadError] = React.useState('');
 
-  const updateStatus = (id: string, status: JoinRequest['status']) => {
-    setData({ ...data, joinRequests: requests.map((r) => r.id === id ? { ...r, status } : r) });
+  const fetchRequests = React.useCallback(async () => {
+    setLoading(true);
+    setLoadError('');
+    try {
+      const { loadJoinRequests } = await import('@/lib/joinRequestsService');
+      const list = await loadJoinRequests();
+      setRequests(list);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
+
+  const updateStatus = async (id: string, status: JoinRequest['status']) => {
+    const { updateJoinRequestStatus } = await import('@/lib/joinRequestsService');
+    const ok = await updateJoinRequestStatus(id, status);
+    if (ok) setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
   };
-  const deleteReq = (id: string) => {
-    setData({ ...data, joinRequests: requests.filter((r) => r.id !== id) });
+
+  const deleteReq = async (id: string) => {
+    if (!confirm(t('حذف هذا الطلب؟', 'Delete this request?'))) return;
+    const { deleteJoinRequest } = await import('@/lib/joinRequestsService');
+    const ok = await deleteJoinRequest(id);
+    if (ok) setRequests((prev) => prev.filter((r) => r.id !== id));
   };
 
   const statusColor: Record<JoinRequest['status'], string> = {
-    pending: '#f59e0b', accepted: '#16a34a', rejected: '#dc2626'
+    pending: '#f59e0b', accepted: '#16a34a', rejected: '#dc2626',
   };
   const statusLabel: Record<JoinRequest['status'], string> = {
     pending: lang === 'ar' ? 'معلق' : 'Pending',
@@ -1443,26 +1469,59 @@ function JoinRequestsSec() {
     rejected: lang === 'ar' ? 'مرفوض' : 'Rejected',
   };
 
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--text-muted)', fontFamily: 'Cairo,sans-serif' }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>⏳</div>
+        <p>{t('جاري تحميل الطلبات...', 'Loading requests...')}</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ textAlign: 'center', padding: '60px 24px', fontFamily: 'Cairo,sans-serif' }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>⚠️</div>
+        <p style={{ color: '#dc2626', marginBottom: 8, fontSize: 14 }}>{loadError}</p>
+        <p style={{ color: 'var(--text-muted)', marginBottom: 20, fontSize: 13 }}>
+          {t('ملاحظة: يتطلب عرض الطلبات جلسة مصادقة (Supabase Auth). ستعمل هذه الميزة بعد ربط تسجيل الدخول بـ Supabase Auth.', 'Note: Reading requests requires an authenticated session (Supabase Auth). This will work after login is connected to Supabase Auth.')}
+        </p>
+        <button
+          onClick={fetchRequests}
+          style={{ padding: '9px 20px', borderRadius: 10, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', fontSize: 14, fontWeight: 700, fontFamily: 'Cairo,sans-serif' }}
+        >
+          🔄 {t('إعادة المحاولة', 'Retry')}
+        </button>
+      </div>
+    );
+  }
+
   if (requests.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 24px', color: 'var(--text-muted)', fontFamily: 'Cairo,sans-serif' }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>📋</div>
         <p>{t('لا توجد طلبات انضمام بعد', 'No join requests yet')}</p>
+        <button onClick={fetchRequests} style={{ marginTop: 16, padding: '7px 18px', borderRadius: 9, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}>
+          🔄 {t('تحديث', 'Refresh')}
+        </button>
       </div>
     );
   }
 
   return (
     <div>
-      <div style={{ marginBottom: 16, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      <div style={{ marginBottom: 16, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         {(['pending', 'accepted', 'rejected'] as const).map((s) => (
           <span key={s} style={{ padding: '3px 12px', borderRadius: 100, fontSize: 12, fontFamily: 'Cairo,sans-serif', fontWeight: 700, background: statusColor[s] + '20', color: statusColor[s] }}>
             {statusLabel[s]}: {requests.filter((r) => r.status === s).length}
           </span>
         ))}
+        <button onClick={fetchRequests} style={{ marginInlineStart: 'auto', padding: '4px 12px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}>
+          🔄 {t('تحديث', 'Refresh')}
+        </button>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {requests.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((req) => (
+        {requests.map((req) => (
           <div key={req.id} style={{ background: 'var(--surface)', borderRadius: 14, padding: '18px 20px', border: `1.5px solid ${statusColor[req.status]}30` }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
               <div>
@@ -1476,23 +1535,33 @@ function JoinRequestsSec() {
                 <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}>📞 {req.phone}</span>
                   <span style={{ fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}>🎂 {t('العمر:', 'Age:')} {req.age}</span>
-                  {req.groupId && <span style={{ fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}>
-                    🏕️ {data.groups.find((g) => g.id === req.groupId)?.[lang === 'ar' ? 'nameAr' : 'nameEn'] || req.groupId}
-                  </span>}
+                  {req.groupId && (
+                    <span style={{ fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)' }}>
+                      🏕️ {data.groups.find((g) => g.id === req.groupId)?.[lang === 'ar' ? 'nameAr' : 'nameEn'] || req.groupId}
+                    </span>
+                  )}
                   <span style={{ fontSize: 11, fontFamily: 'Jost,sans-serif', color: 'var(--text-muted)' }}>
                     {new Date(req.date).toLocaleDateString(lang === 'ar' ? 'ar-KW' : 'en-GB')}
                   </span>
                 </div>
-                {req.message && <p style={{ fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)', marginTop: 8, padding: '8px 12px', background: 'var(--surface-2)', borderRadius: 8 }}>{req.message}</p>}
+                {req.message && (
+                  <p style={{ fontSize: 13, fontFamily: 'Cairo,sans-serif', color: 'var(--text-muted)', marginTop: 8, padding: '8px 12px', background: 'var(--surface-2)', borderRadius: 8 }}>
+                    {req.message}
+                  </p>
+                )}
               </div>
               <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                 {req.status !== 'accepted' && (
-                  <button onClick={() => updateStatus(req.id, 'accepted')} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid #86efac', background: 'none', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif', color: '#16a34a', fontWeight: 600 }}>✓ {t('قبول', 'Accept')}</button>
+                  <button onClick={() => updateStatus(req.id, 'accepted')} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid #86efac', background: 'none', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif', color: '#16a34a', fontWeight: 600 }}>
+                    ✓ {t('قبول', 'Accept')}
+                  </button>
                 )}
                 {req.status !== 'rejected' && (
-                  <button onClick={() => updateStatus(req.id, 'rejected')} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid #fca5a5', background: 'none', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif', color: '#dc2626', fontWeight: 600 }}>✗ {t('رفض', 'Reject')}</button>
+                  <button onClick={() => updateStatus(req.id, 'rejected')} style={{ padding: '5px 12px', borderRadius: 8, border: '1px solid #fca5a5', background: 'none', cursor: 'pointer', fontSize: 12, fontFamily: 'Cairo,sans-serif', color: '#dc2626', fontWeight: 600 }}>
+                    ✗ {t('رفض', 'Reject')}
+                  </button>
                 )}
-                <button onClick={() => { if (confirm(t('حذف؟', 'Delete?'))) deleteReq(req.id); }} style={{ padding: '5px 8px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 14 }}>🗑</button>
+                <button onClick={() => deleteReq(req.id)} style={{ padding: '5px 8px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: 14 }}>🗑</button>
               </div>
             </div>
           </div>

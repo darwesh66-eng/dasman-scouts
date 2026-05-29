@@ -1,32 +1,46 @@
 import React, { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import type { JoinRequest } from '@/contexts/AppContext';
+import { submitJoinRequest } from '@/lib/joinRequestsService';
 
 interface Props { setPage: (p: string) => void }
 
 export default function JoinPage({ setPage }: Props) {
-  const { data, setData, lang, t } = useApp();
+  const { data, lang, t } = useApp();
   const [form, setForm] = useState({ nameAr: '', nameEn: '', phone: '', age: '', groupId: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.nameAr.trim() || !form.phone.trim() || !form.age.trim()) {
       setError(t('الرجاء تعبئة الحقول المطلوبة', 'Please fill in required fields'));
       return;
     }
+    setSubmitting(true);
+    setError('');
     const req: JoinRequest = {
-      id: Date.now().toString(),
+      // Use crypto.randomUUID when available, fall back to timestamp+random
+      id: (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+        ? crypto.randomUUID()
+        : `jr_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       ...form,
       date: new Date().toISOString(),
       status: 'pending',
     };
-    setData({ ...data, joinRequests: [...(data.joinRequests || []), req] });
-    setSubmitted(true);
-    setError('');
+    const ok = await submitJoinRequest(req);
+    setSubmitting(false);
+    if (ok) {
+      setSubmitted(true);
+    } else {
+      setError(t(
+        'حدث خطأ في إرسال الطلب. يرجى المحاولة مرة أخرى.',
+        'Failed to submit request. Please try again.',
+      ));
+    }
   };
 
   const inputStyle: React.CSSProperties = {
@@ -243,18 +257,20 @@ export default function JoinPage({ setPage }: Props) {
 
               <button
                 type="submit"
+                disabled={submitting}
                 style={{
                   width: '100%', padding: '14px 24px', borderRadius: 14, border: 'none',
                   background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
                   color: '#fff', fontSize: 16, fontWeight: 900,
-                  fontFamily: 'Cairo,sans-serif', cursor: 'pointer',
+                  fontFamily: 'Cairo,sans-serif', cursor: submitting ? 'not-allowed' : 'pointer',
                   boxShadow: '0 8px 24px rgba(27,58,107,0.3)',
                   transition: 'transform 0.2s, box-shadow 0.2s',
+                  opacity: submitting ? 0.7 : 1,
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(27,58,107,0.4)'; }}
+                onMouseEnter={(e) => { if (!submitting) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(27,58,107,0.4)'; } }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 24px rgba(27,58,107,0.3)'; }}
               >
-                ⚜️ {t('أرسل طلب الانضمام', 'Submit Join Request')}
+                {submitting ? `⏳ ${t('جاري الإرسال...', 'Submitting...')}` : `⚜️ ${t('أرسل طلب الانضمام', 'Submit Join Request')}`}
               </button>
 
               <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-muted)', marginTop: 12, fontFamily: 'Cairo,sans-serif' }}>
