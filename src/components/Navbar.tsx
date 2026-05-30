@@ -85,7 +85,7 @@ export default function Navbar({ currentPage, setPage, onSearch, darkMode = fals
         All 5 controls: hamburger | logo + title | theme | lang
         ═══════════════════════════════════════════════════════ */}
     <header
-      className="lg:hidden"
+      className="mobile-nav-bar"
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
       style={{
         position: 'fixed',
@@ -94,7 +94,8 @@ export default function Navbar({ currentPage, setPage, onSearch, darkMode = fals
         zIndex: 800,
         background: 'var(--primary)',
         borderBottom: '1px solid rgba(255,255,255,0.10)',
-        display: 'flex',
+        /* display handled by .mobile-nav-bar CSS — no inline display so
+           the media query can cleanly show/hide without !important fights */
         alignItems: 'center',
         gap: 6,
         padding: '0 10px',

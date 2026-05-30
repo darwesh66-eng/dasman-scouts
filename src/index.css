@@ -62,13 +62,21 @@ html {
   font-size: 16px;
 }
 
-/* ── Mobile: hide the desktop nav, set header height CSS variable ──────── */
+/* ── Mobile header: show only below 1024 px ──────────────────────────────
+   .mobile-nav-bar display is controlled here, NOT via inline style, so the
+   media query can cleanly show/hide without fighting inline-style specificity. */
+.mobile-nav-bar {
+  display: none; /* hidden by default (desktop-first) */
+}
 @media (max-width: 1023px) {
   :root {
     /* Mobile header is position:fixed at 52px; pages push content below it. */
     --nav-h: 52px;
   }
-  /* Desktop nav hidden on mobile — the new <header class="lg:hidden"> takes over */
+  .mobile-nav-bar {
+    display: flex; /* shown only on mobile/tablet (< 1024 px) */
+  }
+  /* Desktop nav hidden on mobile — .mobile-nav-bar takes over */
   .navbar-row {
     display: none !important;
   }
