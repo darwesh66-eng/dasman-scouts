@@ -1,8 +1,10 @@
+/* Font imports must come before Tailwind directives (CSS @import ordering rule). */
+/* display=swap → text shows in fallback font immediately, swaps in when ready. */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap');
 
 *,
 *::before,
@@ -41,6 +43,45 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* ────────── Header layout ────────── */
+/* Desktop: fixed bar, full-width flex row (unchanged behaviour). */
+.navbar-row {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 clamp(14px, 4vw, 24px);
+}
+.nav-title {
+  font-size: 16px;
+}
+
+/* ── Mobile: hide the desktop nav, set header height CSS variable ──────── */
+@media (max-width: 1023px) {
+  :root {
+    /* Mobile header is position:fixed at 52px; pages push content below it. */
+    --nav-h: 52px;
+  }
+  /* Desktop nav hidden on mobile — the new <header class="lg:hidden"> takes over */
+  .navbar-row {
+    display: none !important;
+  }
+}
+
+/* ────────── Mobile drawer slide-in ────────── */
+@keyframes drawerInRight {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+@keyframes drawerInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
 }
 
 body {
@@ -315,6 +356,25 @@ body {
   .bottom-nav {
     display: flex;
   }
+  /* Reserve space so the fixed bottom nav never hides footer links / last content. */
+  body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ────────── WhatsApp Floating Button ────────── */
+/* On mobile: smaller and lifted above the bottom nav so it never blocks it. */
+@media (max-width: 768px) {
+  .whatsapp-fab {
+    width: 44px !important;
+    height: 44px !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 16px !important;
+  }
+  .whatsapp-fab svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 /* ────────── Search Overlay ────────── */
@@ -496,6 +556,44 @@ html.dark {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* ────────── Reduced Motion (accessibility) ────────── */
+/* Respect the user's OS-level "reduce motion" setting. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ────────── Join form responsive grid ────────── */
+.join-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+@media (max-width: 560px) {
+  /* Stack the two-column rows into a single column on small phones. */
+  .join-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ────────── Mobile input zoom fix ────────── */
+/* iOS Safari zooms the page when focusing inputs with font-size < 16px.
+   Force 16px on mobile to keep the layout stable when the keyboard opens. */
+@media (max-width: 768px) {
+  input:not([type='range']):not([type='checkbox']):not([type='color']):not([type='radio']),
+  textarea,
+  select {
+    font-size: 16px !important;
   }
 }
 

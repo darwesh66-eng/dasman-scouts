@@ -13,6 +13,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp"
+      className="whatsapp-fab"
       style={{
         position: 'fixed',
         bottom: 24,

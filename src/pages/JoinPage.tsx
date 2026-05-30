@@ -128,7 +128,7 @@ export default function JoinPage({ setPage }: Props) {
               </h2>
 
               {/* Name row */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+              <div className="join-grid-2">
                 <div>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, fontFamily: 'Cairo,sans-serif', textTransform: 'uppercase' }}>
                     {t('الاسم بالعربي *', 'Name (Arabic) *')}
@@ -160,7 +160,7 @@ export default function JoinPage({ setPage }: Props) {
               </div>
 
               {/* Phone & Age */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+              <div className="join-grid-2">
                 <div>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, fontFamily: 'Cairo,sans-serif', textTransform: 'uppercase' }}>
                     {t('رقم الهاتف *', 'Phone *')}
@@ -168,6 +168,7 @@ export default function JoinPage({ setPage }: Props) {
                   <input
                     required
                     type="tel"
+                    inputMode="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+965 XXXX XXXX"
@@ -184,6 +185,7 @@ export default function JoinPage({ setPage }: Props) {
                   <input
                     required
                     type="number"
+                    inputMode="numeric"
                     min="6"
                     max="22"
                     value={form.age}

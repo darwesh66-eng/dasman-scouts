@@ -50,7 +50,7 @@ export default function GroupsPage() {
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ paddingTop: 'var(--nav-h)', minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Header */}
-      <div style={{ background: 'var(--primary)', color: '#fff', padding: '48px 24px 56px', textAlign: 'center' }}>
+      <div style={{ background: 'var(--primary)', color: '#fff', padding: 'clamp(32px,6vw,48px) clamp(16px,4vw,24px) clamp(36px,6vw,56px)', textAlign: 'center' }}>
         <h1 className="sa" style={{ fontSize: 'clamp(26px,4vw,44px)', fontWeight: 900, fontFamily: lang === 'ar' ? 'Cairo,sans-serif' : 'Playfair Display,serif' }}>
           {t('الفرق الكشفية', 'Scout Groups')}
         </h1>
@@ -60,7 +60,7 @@ export default function GroupsPage() {
       </div>
 
       {/* Group tabs */}
-      <div style={{ display: 'flex', gap: 12, padding: '24px', maxWidth: 1100, margin: '0 auto', overflowX: 'auto', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 12, padding: 'clamp(16px,4vw,24px)', maxWidth: 1100, margin: '0 auto', overflowX: 'auto', flexWrap: 'wrap' }}>
         {data.groups.map((g) => (
           <button
             key={g.id}
@@ -82,11 +82,11 @@ export default function GroupsPage() {
 
       {/* Group content */}
       {currentGroup && (
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 64px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 clamp(16px,4vw,24px) clamp(40px,8vw,64px)' }}>
           {/* Group card */}
-          <div className="card sa" style={{ padding: 32, borderTop: `6px solid ${currentGroup.color}`, marginBottom: 40 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div style={{ fontSize: 56 }}>{currentGroup.emoji}</div>
+          <div className="card sa" style={{ padding: 'clamp(20px,4vw,32px)', borderTop: `6px solid ${currentGroup.color}`, marginBottom: 'clamp(24px,5vw,40px)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(14px,3vw,20px)' }}>
+              <div style={{ fontSize: 'clamp(40px,10vw,56px)' }}>{currentGroup.emoji}</div>
               <div>
                 <h2 style={{ fontSize: 26, fontWeight: 900, color: 'var(--text)', fontFamily: 'Cairo,sans-serif' }}>
                   {lang === 'ar' ? currentGroup.nameAr : currentGroup.nameEn}

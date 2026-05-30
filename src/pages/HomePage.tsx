@@ -79,7 +79,7 @@ function ActivityVideo({ id, url, thumb, caption }: { id: string; url: string; t
       ) : (
         <>
           {thumb ? (
-            <img src={thumb} alt={caption} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
+            <img src={thumb} alt={caption} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} loading="lazy" />
           ) : (
             <div style={{ aspectRatio: '16/9', background: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🎬</div>
           )}
