@@ -75,10 +75,10 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
                 {l.label}
               </Link>
             ))}
-            <Link href={switchHref} className="lang-switch num" title={otherLang === "ar" ? "العربية" : "English"}>
-              {otherLang === "ar" ? "ع" : "EN"}
-            </Link>
           </div>
+          <Link href={switchHref} className="lang-switch num" title={otherLang === "ar" ? "العربية" : "English"}>
+            {otherLang === "ar" ? "ع" : "EN"}
+          </Link>
           <Link href={`/${lang}/join`} className="btn btn-e nav-join">
             {t(lang, "navJoin")}
           </Link>
@@ -113,13 +113,6 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
             style={{ transitionDelay: open ? "0.32s" : "0s" }}
           >
             {t(lang, "navJoin")}
-          </Link>
-          <Link
-            href={switchHref}
-            className="d-link d-lang num"
-            style={{ transitionDelay: open ? "0.38s" : "0s" }}
-          >
-            {otherLang === "ar" ? "العربية ع" : "English EN"}
           </Link>
         </div>
       </div>

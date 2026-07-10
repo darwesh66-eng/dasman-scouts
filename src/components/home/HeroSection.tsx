@@ -34,9 +34,16 @@ export default function HeroSection({
       const vh = innerHeight;
       if (bgRef.current)
         bgRef.current.style.transform = `translateY(${y * 0.28}px) scale(${1 + Math.min(y / vh, 1) * 0.06})`;
-      railRef.current
-        ?.querySelectorAll<HTMLElement>(".srail-card")
-        .forEach((c) => (c.style.transform = `translateY(${-y * +(c.dataset.f ?? 0)}px)`));
+      // stat-rail depth drift is a desktop-only effect; on mobile the cards
+      // sit in normal flow and moving them causes overlaps
+      if (innerWidth > 920)
+        railRef.current
+          ?.querySelectorAll<HTMLElement>(".srail-card")
+          .forEach((c) => (c.style.transform = `translateY(${-y * +(c.dataset.f ?? 0)}px)`));
+      else
+        railRef.current
+          ?.querySelectorAll<HTMLElement>(".srail-card")
+          .forEach((c) => (c.style.transform = ""));
     };
     const onScroll = () => {
       if (!raf.current) raf.current = requestAnimationFrame(frame);

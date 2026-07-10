@@ -374,3 +374,29 @@ footer{padding:44px 0;text-align:center;color:var(--ink-2);font-size:14px;font-w
 @media(max-width:700px){
   footer{padding-bottom:100px}
 }
+
+/* ── mobile polish: opaque drawer, hero clearance, compact stats ── */
+.drawer{background:linear-gradient(170deg,rgba(13,24,46,.97) 0%,rgba(20,44,82,.96) 60%,rgba(27,58,107,.96) 100%)}
+.drawer-inner{gap:10px}
+.d-link{width:min(320px,86vw);text-align:center;font-size:21px;padding:15px 26px;min-height:48px}
+.d-cta{width:min(320px,86vw);justify-content:center;min-height:48px}
+@media(max-width:860px){
+  .nav .lang-switch{margin-inline-start:auto;min-width:44px;min-height:38px;display:grid;place-items:center;padding:0 12px}
+}
+@media(max-width:920px){
+  /* hero: content starts below the fixed nav instead of underlapping it */
+  .hero{align-items:flex-start;min-height:auto}
+  .hero-content{padding:118px 0 56px}
+  .hero h1{font-size:clamp(32px,10vw,44px)}
+  .hero .tag{font-size:14.5px;margin-bottom:26px}
+  .hero .btns{gap:10px}
+  .hero .btns .btn{padding:12px 22px;font-size:14px}
+  /* compact stat cards in a tidy row */
+  .stat-rail{flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:34px}
+  .srail-card{flex:1;min-width:0;flex-direction:column;text-align:center;gap:8px;padding:14px 8px;border-radius:18px}
+  .srail-card .badge{width:40px;height:40px}
+  .srail-card .badge svg{width:18px;height:18px}
+  .srail-card .badge::after{inset:3px}
+  .srail-card .n{font-size:21px}
+  .srail-card .l{font-size:11px;margin-top:2px}
+}
