@@ -367,8 +367,14 @@ footer{padding:44px 0;text-align:center;color:var(--ink-2);font-size:14px;font-w
   .nav .mark{width:32px;height:32px}
   .nav .btn-e.nav-join{padding:9px 16px;font-size:13px;white-space:nowrap}
 }
-@media(max-width:420px){
-  .nav .btn-e.nav-join{display:none} /* the drawer CTA covers it */
+@media(max-width:640px){
+  /* the drawer CTA covers it — keeping it inline overflows the pill on phones */
+  .nav .btn-e.nav-join{display:none}
+}
+@media(max-width:860px){
+  /* never let the brand text push the burger out of the pill */
+  .nav .brandline{flex:1;min-width:0}
+  .nav .brand-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 /* footer clearance for the floating contact button on small screens */
 @media(max-width:700px){
