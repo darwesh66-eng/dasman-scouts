@@ -3,11 +3,12 @@
 import { useEffect, useRef } from "react";
 import Icon from "@/components/Icon";
 import type { GalleryItem } from "@/lib/appData";
+import { pick, type Lang } from "@/lib/i18n";
 
 const SPANS = ["g1", "g2", "g3", "g4", "g5", "g6"];
 
 /** Editorial photo grid with subtle scroll drift + glass captions. */
-export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
+export default function GalleryGrid({ lang, items }: { lang: Lang; items: GalleryItem[] }) {
   const gridRef = useRef<HTMLDivElement>(null);
   const raf = useRef<number | null>(null);
 
@@ -37,17 +38,20 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
 
   return (
     <div className="gal-grid" ref={gridRef}>
-      {items.map((item, i) => (
-        <div key={item.id} className={`gitem ${SPANS[i % SPANS.length]}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={item.url} alt={item.captionAr || ""} loading={i > 2 ? "lazy" : undefined} />
-          {item.captionAr && (
-            <div className="cap">
-              <Icon id="i-camera" /> {item.captionAr}
-            </div>
-          )}
-        </div>
-      ))}
+      {items.map((item, i) => {
+        const caption = pick(lang, item.captionAr, item.captionEn);
+        return (
+          <div key={item.id} className={`gitem ${SPANS[i % SPANS.length]}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.url} alt={caption} loading={i > 2 ? "lazy" : undefined} />
+            {caption && (
+              <div className="cap">
+                <Icon id="i-camera" /> {caption}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -18,6 +18,7 @@ export default function IconSprite() {
         <symbol id="i-form" viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="17" rx="3"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></symbol>
         <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.3 2.3 4.7-5"/></symbol>
         <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+        <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10.5h17"/></symbol>
         <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9.3-9.3C1.6 7.9 3.6 5 6.6 5c2 0 3.6 1.2 4.4 2.8h2C13.8 6.2 15.4 5 17.4 5c3 0 5 2.9 3.9 5.7C19.5 15.4 12 20 12 20z"/></symbol>
         <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.5 2.5 5.2 5.7.7-4.2 4 1.1 5.6L12 16.3 6.9 19l1.1-5.6-4.2-4 5.7-.7L12 3.5z"/></symbol>
       </defs>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Icon from "@/components/Icon";
 import type { HomeVideo } from "@/lib/appData";
+import { pick, type Lang } from "@/lib/i18n";
 
 function ytId(url: string) {
   return url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/)?.[1];
@@ -12,7 +13,7 @@ function igEmbed(url: string) {
   return m ? `https://www.instagram.com/${m[1]}/${m[2]}/embed/` : null;
 }
 
-export default function VideoCard({ video }: { video: HomeVideo }) {
+export default function VideoCard({ lang, video }: { lang: Lang; video: HomeVideo }) {
   const [playing, setPlaying] = useState(false);
   const yid = video.type === "youtube" ? ytId(video.url) : null;
   const ig = video.type === "instagram" ? igEmbed(video.url) : null;
@@ -20,6 +21,8 @@ export default function VideoCard({ video }: { video: HomeVideo }) {
     yid != null
       ? `https://img.youtube.com/vi/${yid}/hqdefault.jpg`
       : `https://picsum.photos/seed/dasman-video-${video.id}/700/440`;
+  const title = pick(lang, video.titleAr, video.titleEn);
+  const desc = pick(lang, video.descriptionAr, video.descriptionEn);
 
   const iframeStyle: React.CSSProperties = {
     position: "absolute",
@@ -49,14 +52,14 @@ export default function VideoCard({ video }: { video: HomeVideo }) {
       ) : (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={thumb} alt={video.titleAr} loading="lazy" />
+          <img src={thumb} alt={title} loading="lazy" />
           <div className="veil" />
           <span className="play">
             <Icon id="i-play" />
           </span>
           <div className="vt">
-            <div className="t">{video.titleAr}</div>
-            {video.descriptionAr && <div className="s">{video.descriptionAr}</div>}
+            <div className="t">{title}</div>
+            {desc && <div className="s">{desc}</div>}
           </div>
         </>
       )}

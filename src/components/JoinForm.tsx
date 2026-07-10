@@ -4,6 +4,7 @@ import { useState } from "react";
 import Icon from "@/components/Icon";
 import { getSupabase } from "@/lib/supabaseClient";
 import { GROUP_AGES, type Group } from "@/lib/appData";
+import { t, pick, type Lang } from "@/lib/i18n";
 
 const TROOP_ICONS: Record<string, string> = {
   ashbal: "i-paw",
@@ -14,7 +15,7 @@ const TROOP_ICONS: Record<string, string> = {
 
 type Section = "boys" | "girls";
 
-export default function JoinForm({ groups }: { groups: Group[] }) {
+export default function JoinForm({ lang, groups }: { lang: Lang; groups: Group[] }) {
   const boys = groups.filter((g) => ["ashbal", "fatyan"].includes(g.id));
   const girls = groups.filter((g) => ["zahrat", "murshidat"].includes(g.id));
 
@@ -60,11 +61,9 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
           <Icon id="i-check" />
         </span>
         <h3 style={{ fontSize: 22, fontWeight: 900, color: "var(--navy-deep)", marginBottom: 10 }}>
-          وصلنا طلبك!
+          {t(lang, "fDoneT")}
         </h3>
-        <p style={{ color: "var(--ink-2)", fontWeight: 600, lineHeight: 1.9 }}>
-          القائد المسؤول هيتواصل معك على الواتساب خلال يومين لتأكيد التسجيل.
-        </p>
+        <p style={{ color: "var(--ink-2)", fontWeight: 600, lineHeight: 1.9 }}>{t(lang, "fDoneS")}</p>
       </div>
     );
   }
@@ -73,11 +72,11 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
     <form className="form-card" onSubmit={submit}>
       <div className="field">
         <label>
-          اسم المشترك <span className="req">*</span>
+          {t(lang, "fName")} <span className="req">*</span>
         </label>
         <input
           type="text"
-          placeholder="الاسم الثلاثي"
+          placeholder={t(lang, "fNamePh")}
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -86,7 +85,7 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
 
       <div className="field">
         <label>
-          القسم <span className="req">*</span>
+          {t(lang, "fSection")} <span className="req">*</span>
         </label>
         <div className="seg">
           <span>
@@ -98,7 +97,7 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
               onChange={() => pickSection("boys")}
             />
             <label className="opt" htmlFor="sec-boys">
-              <Icon id="i-tent" /> بنين — الكشافة
+              <Icon id="i-tent" /> {t(lang, "fBoys")}
             </label>
           </span>
           <span>
@@ -110,7 +109,7 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
               onChange={() => pickSection("girls")}
             />
             <label className="opt" htmlFor="sec-girls">
-              <Icon id="i-flower" /> بنات — المرشدات
+              <Icon id="i-flower" /> {t(lang, "fGirls")}
             </label>
           </span>
         </div>
@@ -118,23 +117,23 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
 
       <div className="field">
         <label>
-          الفرقة <span className="req">*</span>
+          {t(lang, "fTroop")} <span className="req">*</span>
         </label>
         <div className="seg">
-          {troops.map((t) => (
-            <span key={t.id}>
+          {troops.map((tr) => (
+            <span key={tr.id}>
               <input
                 type="radio"
                 name="troop"
-                id={`troop-${t.id}`}
-                checked={troopId === t.id}
-                onChange={() => setTroopId(t.id)}
+                id={`troop-${tr.id}`}
+                checked={troopId === tr.id}
+                onChange={() => setTroopId(tr.id)}
               />
-              <label className="opt col" htmlFor={`troop-${t.id}`}>
+              <label className="opt col" htmlFor={`troop-${tr.id}`}>
                 <span className="nm">
-                  <Icon id={TROOP_ICONS[t.id] ?? "i-fleur"} /> {t.nameAr}
+                  <Icon id={TROOP_ICONS[tr.id] ?? "i-fleur"} /> {pick(lang, tr.nameAr, tr.nameEn)}
                 </span>
-                {GROUP_AGES[t.id] && <small>{GROUP_AGES[t.id]}</small>}
+                {GROUP_AGES[tr.id] && <small>{GROUP_AGES[tr.id][lang]}</small>}
               </label>
             </span>
           ))}
@@ -143,14 +142,14 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
 
       <div className="field">
         <label>
-          العمر <span className="req">*</span>
+          {t(lang, "fAge")} <span className="req">*</span>
         </label>
         <input
           type="number"
           inputMode="numeric"
           min={6}
           max={18}
-          placeholder="مثال: 9"
+          placeholder={t(lang, "fAgePh")}
           required
           value={age}
           onChange={(e) => setAge(e.target.value)}
@@ -159,7 +158,7 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
 
       <div className="field">
         <label>
-          رقم ولي الأمر (واتساب) <span className="req">*</span>
+          {t(lang, "fPhone")} <span className="req">*</span>
         </label>
         <input
           type="tel"
@@ -170,14 +169,14 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        <div className="hint">هنتواصل معك على هذا الرقم لتأكيد التسجيل</div>
+        <div className="hint">{t(lang, "fPhoneHint")}</div>
       </div>
 
       <div className="field">
-        <label>ملاحظات (اختياري)</label>
+        <label>{t(lang, "fNotes")}</label>
         <textarea
           rows={3}
-          placeholder="أي معلومات تحب تضيفها عن المشترك"
+          placeholder={t(lang, "fNotesPh")}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
@@ -195,12 +194,12 @@ export default function JoinForm({ groups }: { groups: Group[] }) {
             marginBottom: 16,
           }}
         >
-          حصل خطأ أثناء الإرسال، جرّب مرة أخرى أو كلمنا واتساب.
+          {t(lang, "fError")}
         </div>
       )}
 
       <button className="btn btn-e" disabled={state === "sending"}>
-        {state === "sending" ? "جاري الإرسال…" : "إرسال طلب الانضمام"}{" "}
+        {state === "sending" ? t(lang, "fSending") : t(lang, "fSubmit")}{" "}
         <span className="ico">
           <Icon id="i-form" />
         </span>

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Icon from "@/components/Icon";
 import Reveal from "@/components/Reveal";
 import { type Group, GROUP_AGES } from "@/lib/appData";
+import { t, pick, type Lang } from "@/lib/i18n";
 
 const TROOP_ICONS: Record<string, string> = {
   ashbal: "i-paw",
@@ -16,6 +17,7 @@ const BOY_PATH = "M45 0 C 45 90, 18 130, 18 200 S 72 330, 72 400 S 45 500, 45 56
 const GIRL_PATH = "M45 0 C 45 90, 72 130, 72 200 S 18 330, 18 400 S 45 500, 45 560";
 
 function Track({
+  lang,
   title,
   subtitle,
   headIcon,
@@ -23,6 +25,7 @@ function Track({
   path,
   groups,
 }: {
+  lang: Lang;
   title: string;
   subtitle: string;
   headIcon: string;
@@ -51,9 +54,9 @@ function Track({
             <Icon id={TROOP_ICONS[g.id] ?? "i-fleur"} />
           </span>
           <div className="card">
-            {GROUP_AGES[g.id] && <span className="age">{GROUP_AGES[g.id]}</span>}
-            <h3>{g.nameAr}</h3>
-            <p>{g.descriptionAr}</p>
+            {GROUP_AGES[g.id] && <span className="age">{GROUP_AGES[g.id][lang]}</span>}
+            <h3>{pick(lang, g.nameAr, g.nameEn)}</h3>
+            <p>{pick(lang, g.descriptionAr, g.descriptionEn)}</p>
           </div>
         </Reveal>
       ))}
@@ -61,7 +64,7 @@ function Track({
   );
 }
 
-export default function TrailsSection({ groups }: { groups: Group[] }) {
+export default function TrailsSection({ lang, groups }: { lang: Lang; groups: Group[] }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const raf = useRef<number | null>(null);
 
@@ -103,16 +106,17 @@ export default function TrailsSection({ groups }: { groups: Group[] }) {
     <section className="trail-sec topo" id="trail">
       <div className="wrap">
         <Reveal as="h2" className="sec-title">
-          فرقنا الكشفية والإرشادية
+          {t(lang, "trailsTitle")}
         </Reveal>
         <Reveal as="p" className="sec-sub" delay={1}>
-          مسار مستقل للبنين ومسار مستقل للبنات، لكل مرحلة عمرية فرقتها
+          {t(lang, "trailsSub")}
         </Reveal>
         <div className="tracks" ref={wrapRef}>
           {boys.length > 0 && (
             <Track
-              title="قسم البنين"
-              subtitle="الكشافة"
+              lang={lang}
+              title={t(lang, "boysSection")}
+              subtitle={t(lang, "boysSub")}
               headIcon="i-tent"
               path={BOY_PATH}
               groups={boys}
@@ -120,8 +124,9 @@ export default function TrailsSection({ groups }: { groups: Group[] }) {
           )}
           {girls.length > 0 && (
             <Track
-              title="قسم البنات"
-              subtitle="المرشدات"
+              lang={lang}
+              title={t(lang, "girlsSection")}
+              subtitle={t(lang, "girlsSub")}
               headIcon="i-flower"
               ember
               path={GIRL_PATH}

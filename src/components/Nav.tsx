@@ -4,19 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "./Icon";
+import { t, type Lang } from "@/lib/i18n";
 
-const LINKS = [
-  { href: "/", label: "الرئيسية" },
-  { href: "/about", label: "من نحن" },
-  { href: "/gallery", label: "المعرض" },
-  { href: "/news", label: "الأخبار والفعاليات" },
-];
-
-export default function Nav({ logoUrl }: { logoUrl: string }) {
+export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) {
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const isHome = pathname === `/${lang}`;
   const [scrolled, setScrolled] = useState(false);
   const raf = useRef<number | null>(null);
+
+  const links = [
+    { href: `/${lang}`, label: t(lang, "navHome") },
+    { href: `/${lang}/about`, label: t(lang, "navAbout") },
+    { href: `/${lang}/gallery`, label: t(lang, "navGallery") },
+    { href: `/${lang}/news`, label: t(lang, "navNews") },
+  ];
+  const otherLang: Lang = lang === "ar" ? "en" : "ar";
+  const switchHref = pathname.replace(`/${lang}`, `/${otherLang}`) || `/${otherLang}`;
 
   useEffect(() => {
     const onScroll = () => {
@@ -37,7 +40,7 @@ export default function Nav({ logoUrl }: { logoUrl: string }) {
   return (
     <nav className={`nav ${isHome ? (scrolled ? "scrolled" : "") : "solid"}`}>
       <div className="nav-inner">
-        <Link className="brandline" href="/">
+        <Link className="brandline" href={`/${lang}`}>
           <span className="mark">
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -50,17 +53,20 @@ export default function Nav({ logoUrl }: { logoUrl: string }) {
               <Icon id="i-fleur" />
             )}
           </span>
-          مجموعة دسمان الكشفية
+          {t(lang, "brand")}
         </Link>
         <div className="links">
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <Link key={l.href} href={l.href} className={pathname === l.href ? "on" : ""}>
               {l.label}
             </Link>
           ))}
+          <Link href={switchHref} className="lang-switch num" title={otherLang === "ar" ? "العربية" : "English"}>
+            {otherLang === "ar" ? "ع" : "EN"}
+          </Link>
         </div>
-        <Link href="/join" className="btn btn-e">
-          انضم إلينا
+        <Link href={`/${lang}/join`} className="btn btn-e">
+          {t(lang, "navJoin")}
         </Link>
       </div>
     </nav>

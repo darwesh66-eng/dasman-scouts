@@ -329,3 +329,10 @@ svg.ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.8;strok
 
 footer{padding:44px 0;text-align:center;color:var(--ink-2);font-size:14px;font-weight:600}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* language switch pill */
+.nav .lang-switch{font-weight:800;font-size:13px;padding:8px 14px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.35);text-decoration:none;color:inherit;opacity:.9;transition:.3s var(--ease)}
+.nav .lang-switch:hover{opacity:1;background:rgba(255,255,255,.14)}
+.nav.scrolled .lang-switch,.nav.solid .lang-switch{border-color:rgba(27,58,107,.2)}
+.nav.scrolled .lang-switch:hover,.nav.solid .lang-switch:hover{background:rgba(27,58,107,.08)}

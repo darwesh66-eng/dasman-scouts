@@ -77,6 +77,9 @@ export interface Scout {
   id: string;
   groupId: string;
   visible: boolean;
+  nameAr?: string;
+  nameEn?: string;
+  photo?: string;
 }
 export interface AppData {
   siteName: { ar: string; en: string; subtitle: string };
@@ -136,11 +139,11 @@ export const BOY_GROUP_IDS = ["ashbal", "fatyan"];
 export const GIRL_GROUP_IDS = ["zahrat", "murshidat"];
 
 /** Age labels per known group id (fallback when not derivable from data). */
-export const GROUP_AGES: Record<string, string> = {
-  ashbal: "من 8 إلى 11 سنة",
-  fatyan: "من 11 إلى 15 سنة",
-  zahrat: "من 8 إلى 11 سنة",
-  murshidat: "من 11 إلى 15 سنة",
+export const GROUP_AGES: Record<string, { ar: string; en: string }> = {
+  ashbal: { ar: "من 8 إلى 11 سنة", en: "Ages 8–11" },
+  fatyan: { ar: "من 11 إلى 15 سنة", en: "Ages 11–15" },
+  zahrat: { ar: "من 8 إلى 11 سنة", en: "Ages 8–11" },
+  murshidat: { ar: "من 11 إلى 15 سنة", en: "Ages 11–15" },
 };
 
 export async function getAppData(): Promise<AppData> {

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import CountUp from "@/components/CountUp";
+import { t, type Lang } from "@/lib/i18n";
 
 interface Stat {
   icon: string;
@@ -14,9 +15,11 @@ interface Stat {
 }
 
 export default function HeroSection({
+  lang,
   heroImage,
   stats,
 }: {
+  lang: Lang;
   heroImage: string;
   stats: Stat[];
 }) {
@@ -50,33 +53,30 @@ export default function HeroSection({
     <section className="hero">
       <div className="hero-bg" ref={bgRef}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={heroImage} alt="مجموعة دسمان الكشفية" fetchPriority="high" />
+        <img src={heroImage} alt={t(lang, "brand")} fetchPriority="high" />
       </div>
       <div className="hero-scrim" />
       <div className="hero-content wrap">
         <div className="hero-grid">
           <div>
             <span className="kicker">
-              <Icon id="i-fleur" /> جمعية الكشافة الكويتية
+              <Icon id="i-fleur" /> {t(lang, "kicker")}
             </span>
             <h1>
-              كل رحلة عظيمة
+              {t(lang, "heroTitle1")}
               <br />
-              تبدأ <em>بخطوة</em>
+              {t(lang, "heroTitle2")} <em>{t(lang, "heroTitleEm")}</em>
             </h1>
-            <p className="tag">
-              في دسمان الكشفية، أولادكم وبناتكم بيتعلموا الاعتماد على النفس والقيادة وحب
-              الوطن — في بيئة آمنة وبإشراف قادة مؤهلين.
-            </p>
+            <p className="tag">{t(lang, "heroTag")}</p>
             <div className="btns">
-              <Link href="/join" className="btn btn-e">
-                ابدأ رحلتك معنا{" "}
+              <Link href={`/${lang}/join`} className="btn btn-e">
+                {t(lang, "ctaStart")}{" "}
                 <span className="ico">
                   <Icon id="i-arrow" />
                 </span>
               </Link>
               <a href="#trail" className="btn btn-ghost">
-                تعرّف على الفرق
+                {t(lang, "ctaTroops")}
               </a>
             </div>
           </div>

@@ -1,0 +1,65 @@
+/* ── Admin panel — same design language, denser layout ── */
+.admin-body{background:linear-gradient(168deg,var(--paper),#f0ebe0)}
+.adm-shell{display:grid;grid-template-columns:250px 1fr;min-height:100dvh}
+.adm-side{background:linear-gradient(170deg,var(--navy-deep),var(--navy));color:#fff;padding:22px 14px;
+  display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100dvh;overflow-y:auto}
+.adm-side .brandline{padding:8px 10px 20px;font-size:14.5px}
+.adm-side button.tab{display:flex;align-items:center;gap:11px;width:100%;text-align:start;padding:11px 14px;
+  border-radius:13px;border:none;background:none;color:rgba(255,255,255,.75);font-family:var(--font-cairo);
+  font-size:14px;font-weight:700;cursor:pointer;transition:.25s var(--ease)}
+.adm-side button.tab svg{width:18px;height:18px}
+.adm-side button.tab:hover{background:rgba(255,255,255,.08);color:#fff}
+.adm-side button.tab.on{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+.adm-side .spacer{flex:1}
+.adm-side .meta{font-size:11.5px;color:rgba(255,255,255,.45);padding:10px;font-weight:600;word-break:break-all}
+.adm-main{padding:28px 30px 120px;max-width:980px}
+.adm-main h1{font-size:24px;font-weight:900;color:var(--navy-deep);margin-bottom:4px}
+.adm-main .sub{font-size:13.5px;color:var(--ink-2);font-weight:600;margin-bottom:26px}
+.adm-card{background:#fff;border:1px solid rgba(27,58,107,.1);border-radius:18px;padding:22px;margin-bottom:18px;
+  box-shadow:0 16px 36px -24px rgba(27,58,107,.3)}
+.adm-card h3{font-size:15.5px;font-weight:900;color:var(--navy-deep);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.adm-card h3 svg{width:17px;height:17px;color:var(--ember)}
+.adm-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.adm-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:800px){.adm-grid2,.adm-grid3{grid-template-columns:1fr}.adm-shell{grid-template-columns:1fr}.adm-side{position:static;height:auto;flex-direction:row;flex-wrap:wrap}}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:12.5px;font-weight:800;color:var(--navy-deep);margin-bottom:6px}
+.f input,.f select,.f textarea{width:100%;padding:10px 13px;border-radius:11px;border:1.5px solid rgba(27,58,107,.15);
+  font-family:var(--font-cairo);font-size:13.5px;font-weight:600;background:var(--paper);color:var(--ink);outline:none;
+  transition:border-color .25s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--ember)}
+.f input[dir=ltr]{font-family:var(--font-sora)}
+.adm-item{border:1px solid rgba(27,58,107,.12);border-radius:14px;padding:16px;margin-bottom:12px;background:var(--paper)}
+.adm-item-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.adm-item-head .ttl{font-weight:800;font-size:14px;color:var(--navy-deep);flex:1}
+.btn-sm{padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:800;font-family:var(--font-cairo);
+  cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:.25s var(--ease)}
+.btn-sm svg{width:13px;height:13px}
+.btn-add{background:rgba(27,58,107,.08);color:var(--navy);border:1px dashed rgba(27,58,107,.35)}
+.btn-add:hover{background:rgba(27,58,107,.14)}
+.btn-del{background:#fdeaea;color:#b3261e}
+.btn-del:hover{background:#f9d6d6}
+.btn-ok{background:#e5f5ec;color:#1e7a45}
+.btn-ok:hover{background:#d2eedd}
+.btn-warn{background:#fdf3e3;color:#9a6414}
+.savebar{position:fixed;bottom:0;inset-inline:0;z-index:40;display:flex;justify-content:center;padding:14px;
+  pointer-events:none}
+.savebar .inner{pointer-events:auto;display:flex;align-items:center;gap:14px;background:rgba(20,44,82,.92);
+  color:#fff;padding:12px 14px 12px 22px;border-radius:999px;backdrop-filter:blur(14px);
+  box-shadow:0 20px 44px -14px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2)}
+.savebar .msg{font-size:13.5px;font-weight:700}
+.savebar .btn-e{padding:10px 24px;font-size:14px}
+.chip-status{padding:5px 13px;border-radius:999px;font-size:12px;font-weight:800}
+.chip-status.pending{background:#fdf3e3;color:#9a6414}
+.chip-status.accepted{background:#e5f5ec;color:#1e7a45}
+.chip-status.rejected{background:#fdeaea;color:#b3261e}
+.login-wrap{min-height:100dvh;display:grid;place-items:center;padding:24px}
+.login-card{width:100%;max-width:400px;background:#fff;border:1px solid rgba(27,58,107,.1);border-radius:24px;
+  padding:38px;box-shadow:0 30px 60px -30px rgba(27,58,107,.45);text-align:center}
+.login-card .badge{margin:0 auto 18px}
+.login-card h1{font-size:21px;font-weight:900;color:var(--navy-deep);margin-bottom:6px}
+.login-card .s{font-size:13px;color:var(--ink-2);font-weight:600;margin-bottom:24px}
+.login-card form{text-align:start}
+.err{padding:11px 14px;border-radius:12px;background:#fdeaea;color:#b3261e;font-size:13px;font-weight:700;margin-bottom:14px}
+.thumb{width:56px;height:56px;border-radius:12px;object-fit:cover;border:1px solid rgba(27,58,107,.15);flex-shrink:0;background:#fff}
+.empty-hint{font-size:13px;color:var(--ink-2);font-weight:600;padding:8px 0}

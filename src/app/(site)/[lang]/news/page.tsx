@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getAppData } from "@/lib/appData";
+import { isLang, pick, t, type Lang } from "@/lib/i18n";
 import Icon from "@/components/Icon";
 import Reveal from "@/components/Reveal";
 
 export const revalidate = 120;
-export const metadata: Metadata = { title: "الأخبار والفعاليات | مجموعة دسمان الكشفية" };
 
-function fmtDate(d: string) {
+function fmtDate(d: string, lang: Lang) {
   try {
-    return new Date(d).toLocaleDateString("ar-KW", {
+    return new Date(d).toLocaleDateString(lang === "ar" ? "ar-KW" : "en-GB", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -18,8 +18,16 @@ function fmtDate(d: string) {
   }
 }
 
-export default async function NewsPage() {
+export default async function NewsPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang: langParam } = await params;
+  if (!isLang(langParam)) notFound();
+  const lang = langParam as Lang;
   const data = await getAppData();
+
   const news = data.news
     .filter((n) => n.published)
     .sort((a, b) => b.date.localeCompare(a.date));
@@ -35,9 +43,9 @@ export default async function NewsPage() {
       <header className="page-head topo">
         <div className="wrap">
           <h1>
-            آخر <em>أخبارنا</em>
+            {t(lang, "newsTitle1")} <em>{t(lang, "newsTitleEm")}</em>
           </h1>
-          <p className="sub">كل جديد المجموعة، وفعالياتنا القادمة</p>
+          <p className="sub">{t(lang, "newsSub")}</p>
         </div>
       </header>
 
@@ -48,12 +56,12 @@ export default async function NewsPage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={featured.image || "https://picsum.photos/seed/dasman-news/900/620"}
-                alt={featured.titleAr}
+                alt={pick(lang, featured.titleAr, featured.titleEn)}
               />
               <div className="body">
-                <div className="date">{fmtDate(featured.date)}</div>
-                <h3>{featured.titleAr}</h3>
-                <p>{featured.contentAr?.slice(0, 220)}</p>
+                <div className="date">{fmtDate(featured.date, lang)}</div>
+                <h3>{pick(lang, featured.titleAr, featured.titleEn)}</h3>
+                <p>{pick(lang, featured.contentAr, featured.contentEn)?.slice(0, 220)}</p>
               </div>
             </Reveal>
             {rest.length > 0 && (
@@ -62,12 +70,12 @@ export default async function NewsPage() {
                   <Reveal key={n.id} className="news-card" delay={(i % 2) as 0 | 1}>
                     {n.image && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={n.image} alt={n.titleAr} loading="lazy" />
+                      <img src={n.image} alt={pick(lang, n.titleAr, n.titleEn)} loading="lazy" />
                     )}
                     <div className="body">
-                      <div className="date">{fmtDate(n.date)}</div>
-                      <h4>{n.titleAr}</h4>
-                      <p>{n.contentAr?.slice(0, 140)}</p>
+                      <div className="date">{fmtDate(n.date, lang)}</div>
+                      <h4>{pick(lang, n.titleAr, n.titleEn)}</h4>
+                      <p>{pick(lang, n.contentAr, n.contentEn)?.slice(0, 140)}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -77,7 +85,7 @@ export default async function NewsPage() {
         ) : (
           <Reveal>
             <p style={{ textAlign: "center", color: "var(--ink-2)", fontWeight: 700, padding: "40px 0" }}>
-              لا توجد أخبار منشورة حالياً — ترقّبوا جديدنا قريباً
+              {t(lang, "newsEmpty")}
             </p>
           </Reveal>
         )}
@@ -86,10 +94,10 @@ export default async function NewsPage() {
       <section className="events-sec topo">
         <div className="wrap">
           <Reveal as="h2" className="sec-title">
-            الفعاليات القادمة
+            {t(lang, "eventsTitle")}
           </Reveal>
           <Reveal as="p" className="sec-sub" delay={1}>
-            جهّز شنطتك من دلوقتي
+            {t(lang, "eventsSub")}
           </Reveal>
           <div className="events-list">
             {upcoming.length > 0 ? (
@@ -101,11 +109,11 @@ export default async function NewsPage() {
                     <div className="date num">
                       <div className="d">{d.getDate()}</div>
                       <div className="m">
-                        {d.toLocaleDateString("ar-KW", { month: "long" })}
+                        {d.toLocaleDateString(lang === "ar" ? "ar-KW" : "en-GB", { month: "long" })}
                       </div>
                     </div>
                     <div className="info">
-                      <div className="t">{ev.titleAr}</div>
+                      <div className="t">{pick(lang, ev.titleAr, ev.titleEn)}</div>
                       {ev.time && (
                         <div className="time">
                           <Icon id="i-clock" /> {ev.time}
@@ -114,7 +122,7 @@ export default async function NewsPage() {
                     </div>
                     {group && (
                       <span className="tag">
-                        <Icon id="i-fleur" /> {group.nameAr}
+                        <Icon id="i-fleur" /> {pick(lang, group.nameAr, group.nameEn)}
                       </span>
                     )}
                   </Reveal>
@@ -123,7 +131,7 @@ export default async function NewsPage() {
             ) : (
               <Reveal>
                 <p style={{ textAlign: "center", color: "var(--ink-2)", fontWeight: 700 }}>
-                  لا توجد فعاليات قادمة معلنة حالياً
+                  {t(lang, "eventsEmpty")}
                 </p>
               </Reveal>
             )}
