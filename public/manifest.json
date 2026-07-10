@@ -1,12 +1,12 @@
 {
   "name": "مجموعة دسمان الكشفية",
-  "short_name": "دسمان كشفية",
-  "description": "الموقع الرسمي لمجموعة دسمان الكشفية - Dasman Scout Group",
-  "start_url": "/",
+  "short_name": "دسمان الكشفية",
+  "description": "الموقع الرسمي لمجموعة دسمان الكشفية — Dasman Scout Group",
+  "start_url": "/ar",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#1B3A6B",
-  "theme_color": "#1B3A6B",
+  "background_color": "#f6f2ea",
+  "theme_color": "#1b3a6b",
   "lang": "ar",
   "dir": "rtl",
   "icons": [
@@ -20,17 +20,17 @@
   "categories": ["education", "lifestyle"],
   "shortcuts": [
     {
-      "name": "الأخبار",
-      "short_name": "أخبار",
-      "description": "آخر أخبار الكشافة",
-      "url": "/#news",
+      "name": "الأخبار والفعاليات",
+      "short_name": "الأخبار",
+      "description": "آخر أخبار المجموعة وفعالياتها",
+      "url": "/ar/news",
       "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
     },
     {
       "name": "انضم إلينا",
       "short_name": "انضمام",
-      "description": "سجل اهتمامك بالانضمام",
-      "url": "/#join",
+      "description": "قدم طلب الانضمام إلى المجموعة",
+      "url": "/ar/join",
       "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
     }
   ]

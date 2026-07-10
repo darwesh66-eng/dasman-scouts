@@ -20,6 +20,7 @@ const sora = Sora({
 export const metadata: Metadata = {
   title: "لوحة التحكم | مجموعة دسمان الكشفية",
   robots: { index: false, follow: false },
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
