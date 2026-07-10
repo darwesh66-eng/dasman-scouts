@@ -24,11 +24,10 @@ export default async function HomePage({
   const heroImage =
     data.heroImages?.[0] || "https://picsum.photos/seed/desert-expedition-dusk/1800/1200";
 
-  const visibleScouts = data.scouts?.filter((s) => s.visible).length ?? 0;
+  // Marketing headline number (per the group's request) — not the DB scout
+  // count, which stays the source for internal stats once rosters are filled.
   const stats = [
-    ...(visibleScouts > 0
-      ? [{ icon: "i-users", ember: true, value: visibleScouts, suffix: "+", label: t(lang, "statScouts") }]
-      : []),
+    { icon: "i-users", ember: true, value: 90, suffix: "+", label: t(lang, "statScouts") },
     ...(data.groups.length > 0
       ? [{ icon: "i-tent", value: data.groups.length, label: t(lang, "statTroops") }]
       : []),
@@ -40,7 +39,7 @@ export default async function HomePage({
       : []),
   ].slice(0, 3);
 
-  const galleryTeaser = data.gallery.filter((g) => g.type === "image").slice(0, 6);
+  const galleryTeaser = data.gallery.filter((g) => g.type === "image" && g.url).slice(0, 6);
   const videos = data.homeVideos.slice(0, 3);
 
   return (

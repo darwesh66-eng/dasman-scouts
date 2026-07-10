@@ -43,13 +43,13 @@ export async function generateMetadata({
         ...common,
         title: "Dasman Scout Group",
         description:
-          "Official website of Dasman Scout Group — scout and guide troops for boys and girls in Kuwait",
+          "Official website of Dasman Scout Group — scout troops for boys and girls in Kuwait",
       }
     : {
         ...common,
         title: "مجموعة دسمان الكشفية | Dasman Scout Group",
         description:
-          "الموقع الرسمي لمجموعة دسمان الكشفية — فرق كشفية وإرشادية للبنين والبنات في دولة الكويت",
+          "الموقع الرسمي لمجموعة دسمان الكشفية — فرق كشفية للبنين والبنات في دولة الكويت",
       };
 }
 

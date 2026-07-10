@@ -15,7 +15,7 @@ export default async function GalleryPage({
   if (!isLang(langParam)) notFound();
   const lang = langParam as Lang;
   const data = await getAppData();
-  const photos = data.gallery.filter((g) => g.type === "image");
+  const photos = data.gallery.filter((g) => g.type === "image" && g.url);
 
   return (
     <main>

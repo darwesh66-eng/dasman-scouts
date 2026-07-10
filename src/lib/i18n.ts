@@ -29,13 +29,13 @@ const dict = {
   },
   ctaStart: { ar: "ابدأ رحلتك معنا", en: "Start your journey" },
   ctaTroops: { ar: "تعرف على الفرق", en: "Meet the troops" },
-  statScouts: { ar: "كشاف وكشافة", en: "Scouts & Guides" },
-  statTroops: { ar: "فرق كشفية وإرشادية", en: "Scout & Guide troops" },
+  statScouts: { ar: "كشاف وكشافة", en: "Scouts" },
+  statTroops: { ar: "فرق كشفية", en: "Scout troops" },
   statAwards: { ar: "إنجازاً وجائزة", en: "Awards & honors" },
   statLeaders: { ar: "قادة وقائدات", en: "Leaders" },
 
   // trails
-  trailsTitle: { ar: "فرقنا الكشفية والإرشادية", en: "Our Scout & Guide Troops" },
+  trailsTitle: { ar: "فرقنا الكشفية", en: "Our Scout Troops" },
   trailsSub: {
     ar: "مسار مستقل للبنين ومسار مستقل للبنات، ولكل مرحلة عمرية فرقتها",
     en: "A separate track for boys and one for girls, with a troop for every age group",
@@ -79,8 +79,8 @@ const dict = {
   aboutTitle1: { ar: "حكاية", en: "The Dasman" },
   aboutTitleEm: { ar: "دسمان", en: "Story" },
   aboutSub: {
-    ar: "من أول اجتماع لمجموعة صغيرة إلى عائلة كشفية وإرشادية متكاملة",
-    en: "From a small first gathering to a complete scouting and guiding family",
+    ar: "من أول اجتماع لمجموعة صغيرة إلى عائلة كشفية متكاملة",
+    en: "From a small first gathering to a complete scouting family",
   },
   aboutH2: { ar: "عن مجموعة دسمان الكشفية", en: "About Dasman Scout Group" },
   aboutTracks: {

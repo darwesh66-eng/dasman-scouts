@@ -19,6 +19,7 @@ export default function CountUp({ target, suffix }: { target: number; suffix?: s
             const p = Math.min((t - t0) / dur, 1);
             el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
             if (p < 1) requestAnimationFrame(step);
+            else el.textContent = String(target);
           };
           requestAnimationFrame(step);
         });
@@ -29,10 +30,12 @@ export default function CountUp({ target, suffix }: { target: number; suffix?: s
     return () => io.disconnect();
   }, [target]);
 
+  // SSR renders the final value; the count-up is a progressive enhancement,
+  // so throttled/paused tabs and no-JS visitors still see the real number.
   return (
     <>
       <span ref={ref} className="num">
-        0
+        {target}
       </span>
       {suffix ? <em>{suffix}</em> : null}
     </>

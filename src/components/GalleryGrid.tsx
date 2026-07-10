@@ -38,7 +38,7 @@ export default function GalleryGrid({ lang, items }: { lang: Lang; items: Galler
 
   return (
     <div className="gal-grid" ref={gridRef}>
-      {items.map((item, i) => {
+      {items.filter((it) => it.url).map((item, i) => {
         const caption = pick(lang, item.captionAr, item.captionEn);
         return (
           <div key={item.id} className={`gitem ${SPANS[i % SPANS.length]}`}>
