@@ -406,3 +406,9 @@ footer{padding:44px 0;text-align:center;color:var(--ink-2);font-size:14px;font-w
   .srail-card .n{font-size:21px}
   .srail-card .l{font-size:11px;margin-top:2px}
 }
+
+/* contact fab: hidden until the homepage visitor scrolls into the content */
+.contact-fab{opacity:0;transform:translateY(84px);pointer-events:none;
+  transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.contact-fab.show{opacity:1;transform:none;pointer-events:auto}
+.contact-fab.show:hover{transform:translateY(-3px)}
