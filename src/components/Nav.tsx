@@ -10,8 +10,10 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
   const pathname = usePathname();
   const isHome = pathname === `/${lang}`;
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const raf = useRef<number | null>(null);
+  const lastY = useRef(0);
 
   const links = [
     { href: `/${lang}`, label: t(lang, "navHome") },
@@ -26,7 +28,14 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
     const onScroll = () => {
       if (raf.current) return;
       raf.current = requestAnimationFrame(() => {
-        setScrolled(window.scrollY > (isHome ? window.innerHeight * 0.75 : 80));
+        const y = window.scrollY;
+        setScrolled(y > (isHome ? window.innerHeight * 0.75 : 80));
+        // auto-hide: slide away while scrolling down, return on scroll up
+        const delta = y - lastY.current;
+        if (y < 130) setHidden(false);
+        else if (delta > 6) setHidden(true);
+        else if (delta < -6) setHidden(false);
+        lastY.current = y;
         raf.current = null;
       });
     };
@@ -52,7 +61,9 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
 
   return (
     <>
-      <nav className={`nav ${isHome ? (scrolled ? "scrolled" : "") : "solid"} ${open ? "menu-open" : ""}`}>
+      <nav
+        className={`nav ${isHome ? (scrolled ? "scrolled" : "") : "solid"} ${open ? "menu-open" : ""} ${hidden && !open ? "hide" : ""}`}
+      >
         <div className="nav-inner">
           <Link className="brandline" href={`/${lang}`}>
             <span className="mark">
