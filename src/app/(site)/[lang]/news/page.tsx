@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getAppData } from "@/lib/appData";
 import { isLang, pick, t, type Lang } from "@/lib/i18n";
 import Icon from "@/components/Icon";
@@ -53,10 +54,13 @@ export default async function NewsPage({
         {featured ? (
           <>
             <Reveal className="news-feat">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={featured.image || "https://picsum.photos/seed/dasman-news/900/620"}
                 alt={pick(lang, featured.titleAr, featured.titleEn)}
+                width={900}
+                height={620}
+                sizes="(max-width: 820px) 100vw, 60vw"
+                className="news-feat-img"
               />
               <div className="body">
                 <div className="date">{fmtDate(featured.date, lang)}</div>
@@ -69,8 +73,14 @@ export default async function NewsPage({
                 {rest.slice(0, 4).map((n, i) => (
                   <Reveal key={n.id} className="news-card" delay={(i % 2) as 0 | 1}>
                     {n.image && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={n.image} alt={pick(lang, n.titleAr, n.titleEn)} loading="lazy" />
+                      <Image
+                        src={n.image}
+                        alt={pick(lang, n.titleAr, n.titleEn)}
+                        width={700}
+                        height={380}
+                        sizes="(max-width: 700px) 100vw, 50vw"
+                        className="news-card-img"
+                      />
                     )}
                     <div className="body">
                       <div className="date">{fmtDate(n.date, lang)}</div>

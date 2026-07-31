@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import CountUp from "@/components/CountUp";
 import { t, type Lang } from "@/lib/i18n";
@@ -59,8 +60,14 @@ export default function HeroSection({
   return (
     <section className="hero">
       <div className="hero-bg" ref={bgRef}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={heroImage} alt={t(lang, "brand")} fetchPriority="high" />
+        <Image
+          src={heroImage}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="hero-img"
+        />
       </div>
       <div className="hero-scrim" />
       <div className="hero-content wrap">

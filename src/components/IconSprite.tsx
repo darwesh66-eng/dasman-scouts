@@ -12,6 +12,7 @@ export default function IconSprite() {
         <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><circle cx="16.5" cy="9" r="2.6"/><path d="M16 14.4c2.4.2 4.1 1.8 4.6 4.3"/></symbol>
         <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="14.5" r="5.5"/><path d="m12 12.2.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3.9-1.8zM8.5 9.5 5.5 3M15.5 9.5l3-6.5M12 9V3"/></symbol>
         <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></symbol>
         <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7l1.5-3h3L15 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
         <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5.5v13l11-6.5L7 5.5z" fill="currentColor" stroke="none"/></symbol>
         <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.4 7.5L4 21l1.6-4.3A8.5 8.5 0 1 1 21 12z"/><path d="M8.8 10.2c.3 2.2 2.8 4.7 5 5l1.7-1.2 2 1.4c-.6 1.4-2 2-3.4 1.6-3.2-.9-6.2-3.9-7.1-7.1-.4-1.4.2-2.8 1.6-3.4l1.4 2-1.2 1.7z" strokeWidth="1.4"/></symbol>

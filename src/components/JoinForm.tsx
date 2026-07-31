@@ -71,10 +71,11 @@ export default function JoinForm({ lang, groups }: { lang: Lang; groups: Group[]
   return (
     <form className="form-card" onSubmit={submit}>
       <div className="field">
-        <label>
+        <label htmlFor="jf-name">
           {t(lang, "fName")} <span className="req">*</span>
         </label>
         <input
+          id="jf-name"
           type="text"
           placeholder={t(lang, "fNamePh")}
           required
@@ -83,10 +84,10 @@ export default function JoinForm({ lang, groups }: { lang: Lang; groups: Group[]
         />
       </div>
 
-      <div className="field">
-        <label>
+      <fieldset className="field">
+        <legend>
           {t(lang, "fSection")} <span className="req">*</span>
-        </label>
+        </legend>
         <div className="seg">
           <span>
             <input
@@ -113,12 +114,12 @@ export default function JoinForm({ lang, groups }: { lang: Lang; groups: Group[]
             </label>
           </span>
         </div>
-      </div>
+      </fieldset>
 
-      <div className="field">
-        <label>
+      <fieldset className="field">
+        <legend>
           {t(lang, "fTroop")} <span className="req">*</span>
-        </label>
+        </legend>
         <div className="seg">
           {troops.map((tr) => (
             <span key={tr.id}>
@@ -138,13 +139,14 @@ export default function JoinForm({ lang, groups }: { lang: Lang; groups: Group[]
             </span>
           ))}
         </div>
-      </div>
+      </fieldset>
 
       <div className="field">
-        <label>
+        <label htmlFor="jf-age">
           {t(lang, "fAge")} <span className="req">*</span>
         </label>
         <input
+          id="jf-age"
           type="number"
           inputMode="numeric"
           min={6}
@@ -157,24 +159,27 @@ export default function JoinForm({ lang, groups }: { lang: Lang; groups: Group[]
       </div>
 
       <div className="field">
-        <label>
+        <label htmlFor="jf-phone">
           {t(lang, "fPhone")} <span className="req">*</span>
         </label>
         <input
+          id="jf-phone"
           type="tel"
           inputMode="tel"
+          aria-describedby="jf-phone-hint"
           dir="ltr"
           placeholder="+965 5XXX XXXX"
           required
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        <div className="hint">{t(lang, "fPhoneHint")}</div>
+        <div className="hint" id="jf-phone-hint">{t(lang, "fPhoneHint")}</div>
       </div>
 
       <div className="field">
-        <label>{t(lang, "fNotes")}</label>
+        <label htmlFor="jf-notes">{t(lang, "fNotes")}</label>
         <textarea
+          id="jf-notes"
           rows={3}
           placeholder={t(lang, "fNotesPh")}
           value={message}
@@ -183,17 +188,7 @@ export default function JoinForm({ lang, groups }: { lang: Lang; groups: Group[]
       </div>
 
       {state === "error" && (
-        <div
-          style={{
-            padding: "12px 16px",
-            borderRadius: 14,
-            background: "#fdeaea",
-            color: "#b3261e",
-            fontSize: 14,
-            fontWeight: 700,
-            marginBottom: 16,
-          }}
-        >
+        <div className="form-error" role="alert">
           {t(lang, "fError")}
         </div>
       )}

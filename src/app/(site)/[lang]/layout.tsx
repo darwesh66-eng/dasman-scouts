@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Cairo, Sora } from "next/font/google";
 import { getAppData } from "@/lib/appData";
-import { LANGS, isLang, type Lang } from "@/lib/i18n";
+import { LANGS, isLang, t, type Lang } from "@/lib/i18n";
 import IconSprite from "@/components/IconSprite";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -69,8 +69,13 @@ export default async function SiteLayout({
     <html lang={l} dir={l === "ar" ? "rtl" : "ltr"} className={`${cairo.variable} ${sora.variable}`}>
       <body>
         <IconSprite />
+        <a href="#main" className="skip-link">
+          {t(l, "skipToContent")}
+        </a>
         <Nav lang={l} logoUrl={data.logoSettings?.url ?? ""} />
-        {children}
+        <div id="main" className="page-shell">
+          {children}
+        </div>
         <Footer lang={l} />
         <ContactFab lang={l} whatsapp={data.whatsapp} />
       </body>

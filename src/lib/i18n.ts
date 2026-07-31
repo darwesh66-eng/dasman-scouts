@@ -57,6 +57,13 @@ const dict = {
     en: "The gallery is being prepared… we will share our best moments soon",
   },
 
+  // a11y / controls
+  playVideo: { ar: "تشغيل المقطع", en: "Play video" },
+  closeLabel: { ar: "إغلاق", en: "Close" },
+  prevLabel: { ar: "السابق", en: "Previous" },
+  nextLabel: { ar: "التالي", en: "Next" },
+  skipToContent: { ar: "تخطٍ إلى المحتوى", en: "Skip to content" },
+
   // videos
   vidTitle: { ar: "مقاطع مميزة", en: "Featured Videos" },
   vidSub: { ar: "شاهدوا لحظاتنا كما عشناها", en: "Watch our moments as we lived them" },

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import type { HomeVideo } from "@/lib/appData";
-import { pick, type Lang } from "@/lib/i18n";
+import { pick, t, type Lang } from "@/lib/i18n";
 
 function ytId(url: string) {
   return url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/)?.[1];
@@ -32,37 +33,58 @@ export default function VideoCard({ lang, video }: { lang: Lang; video: HomeVide
     border: "none",
   };
 
-  return (
-    <div className="vid" onClick={() => !playing && setPlaying(true)}>
-      {playing ? (
-        <div style={{ position: "relative", aspectRatio: "16/10", background: "#0a1226" }}>
+  if (playing) {
+    return (
+      <div className="vid">
+        <div className="vid-frame">
           {yid ? (
             <iframe
               src={`https://www.youtube.com/embed/${yid}?autoplay=1`}
+              title={title}
               style={iframeStyle}
               allow="autoplay; encrypted-media"
               allowFullScreen
             />
           ) : ig ? (
-            <iframe src={ig} style={iframeStyle} allow="autoplay; encrypted-media" allowFullScreen />
+            <iframe
+              src={ig}
+              title={title}
+              style={iframeStyle}
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
           ) : video.url ? (
             <video src={video.url} controls autoPlay style={{ ...iframeStyle, objectFit: "cover" }} />
           ) : null}
         </div>
-      ) : (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={thumb} alt={title} loading="lazy" />
-          <div className="veil" />
-          <span className="play">
-            <Icon id="i-play" />
-          </span>
-          <div className="vt">
-            <div className="t">{title}</div>
-            {desc && <div className="s">{desc}</div>}
-          </div>
-        </>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  // A real <button> so the thumbnail is reachable by keyboard and screen readers.
+  return (
+    <button
+      type="button"
+      className="vid"
+      onClick={() => setPlaying(true)}
+      aria-label={`${t(lang, "playVideo")}: ${title}`}
+    >
+      <Image
+        src={thumb}
+        alt=""
+        width={700}
+        height={440}
+        sizes="(max-width: 860px) 100vw, 33vw"
+        className="vid-thumb"
+      />
+      <span className="veil" />
+      <span className="play">
+        <Icon id="i-play" />
+      </span>
+      <span className="vt">
+        <span className="t">{title}</span>
+        {desc && <span className="s">{desc}</span>}
+      </span>
+    </button>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Icon from "./Icon";
 import { t, type Lang } from "@/lib/i18n";
@@ -14,6 +15,8 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
   const [open, setOpen] = useState(false);
   const raf = useRef<number | null>(null);
   const lastY = useRef(0);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
 
   const links = [
     { href: `/${lang}`, label: t(lang, "navHome") },
@@ -51,8 +54,34 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (!open) return;
+      if (e.key === "Escape") {
+        setOpen(false);
+        burgerRef.current?.focus();
+        return;
+      }
+      // keep Tab inside the open drawer
+      if (e.key !== "Tab") return;
+      const items = drawerRef.current?.querySelectorAll<HTMLElement>("a[href]");
+      if (!items?.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !drawerRef.current?.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
     addEventListener("keydown", onKey);
+    // .open flips visibility with no transition, so the first link is
+    // focusable in this same commit
+    if (open) drawerRef.current?.querySelector<HTMLElement>("a[href]")?.focus();
     return () => {
       document.body.style.overflow = "";
       removeEventListener("keydown", onKey);
@@ -68,10 +97,12 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
           <Link className="brandline" href={`/${lang}`}>
             <span className="mark">
               {logoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={logoUrl}
                   alt=""
+                  width={36}
+                  height={36}
+                  sizes="36px"
                   style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }}
                 />
               ) : (
@@ -94,6 +125,8 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
             {t(lang, "navJoin")}
           </Link>
           <button
+            ref={burgerRef}
+            type="button"
             className="burger"
             aria-label={lang === "ar" ? "القائمة" : "Menu"}
             aria-expanded={open}
@@ -106,8 +139,23 @@ export default function Nav({ lang, logoUrl }: { lang: Lang; logoUrl: string }) 
       </nav>
 
       {/* mobile drawer */}
-      <div className={`drawer ${open ? "open" : ""}`} onClick={() => setOpen(false)}>
-        <div className="drawer-inner" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={drawerRef}
+        className={`drawer ${open ? "open" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={lang === "ar" ? "القائمة" : "Menu"}
+        // hidden from AT and taken out of the tab order while closed
+        inert={!open}
+      >
+        <button
+          type="button"
+          className="drawer-backdrop"
+          onClick={() => setOpen(false)}
+          aria-label={t(lang, "closeLabel")}
+          tabIndex={-1}
+        />
+        <div className="drawer-inner">
           {links.map((l, i) => (
             <Link
               key={l.href}

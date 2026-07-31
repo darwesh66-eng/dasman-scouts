@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getAppData } from "@/lib/appData";
 import { isLang, pick, t, type Lang } from "@/lib/i18n";
 import Icon from "@/components/Icon";
@@ -36,13 +37,15 @@ export default async function AboutPage({
             <p className="lead">{t(lang, "aboutTracks")}</p>
           </Reveal>
           <Reveal className="photo" delay={1}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={
-                data.gallery.find((g) => g.type === "image")?.url ||
+                data.gallery.find((g) => g.type === "image" && g.url)?.url ||
                 "https://picsum.photos/seed/scout-history-kw/900/720"
               }
               alt={t(lang, "aboutH2")}
+              width={900}
+              height={720}
+              sizes="(max-width: 960px) 100vw, 50vw"
             />
           </Reveal>
         </div>
@@ -118,10 +121,12 @@ export default async function AboutPage({
               {data.leaders.map((l, i) => (
                 <Reveal key={l.id} className="leader" delay={(i % 3) as 0 | 1 | 2}>
                   <div className="ph">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={l.photo || `https://picsum.photos/seed/leader-${l.id}/240/240`}
                       alt={pick(lang, l.nameAr, l.nameEn)}
+                      width={96}
+                      height={96}
+                      sizes="96px"
                     />
                   </div>
                   <div className="nm">{pick(lang, l.nameAr, l.nameEn)}</div>
