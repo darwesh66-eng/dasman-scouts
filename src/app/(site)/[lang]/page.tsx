@@ -6,6 +6,8 @@ import Icon from "@/components/Icon";
 import Reveal from "@/components/Reveal";
 import HeroSection from "@/components/home/HeroSection";
 import TrailsSection from "@/components/home/TrailsSection";
+import AboutSection from "@/components/home/AboutSection";
+import NewsSection from "@/components/home/NewsSection";
 import GalleryGrid from "@/components/GalleryGrid";
 import VideoCard from "@/components/VideoCard";
 
@@ -41,10 +43,16 @@ export default async function HomePage({
 
   const galleryTeaser = data.gallery.filter((g) => g.type === "image" && g.url).slice(0, 6);
   const videos = data.homeVideos.slice(0, 3);
+  const latestNews = data.news
+    .filter((n) => n.published)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3);
 
   return (
     <main>
       <HeroSection lang={lang} heroImage={heroImage} stats={stats} />
+
+      <AboutSection lang={lang} data={data} />
 
       <TrailsSection lang={lang} groups={data.groups} />
 
@@ -69,6 +77,8 @@ export default async function HomePage({
           </div>
         </section>
       )}
+
+      <NewsSection lang={lang} news={latestNews} />
 
       {videos.length > 0 && (
         <section className="vid-sec topo" id="videos">

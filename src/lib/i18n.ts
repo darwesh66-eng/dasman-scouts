@@ -82,6 +82,16 @@ const dict = {
   step3T: { ar: "٣. أهلاً بكم معنا", en: "3. Welcome aboard" },
   step3S: { ar: "أول نشاط واستلام الزي الكشفي", en: "First activity and receiving the scout uniform" },
 
+  // homepage: about + news blocks
+  aboutHomeKicker: { ar: "من نحن", en: "About us" },
+  aboutCta: { ar: "اقرأ المزيد عنا", en: "Read more about us" },
+  newsHomeTitle: { ar: "آخر الأخبار", en: "Latest News" },
+  newsHomeSub: {
+    ar: "تابعوا أحدث أنشطة المجموعة وإنجازاتها",
+    en: "Follow the group's newest activities and achievements",
+  },
+  newsCta: { ar: "كل الأخبار والفعاليات", en: "All news & events" },
+
   // about page
   aboutTitle1: { ar: "حكاية", en: "The Dasman" },
   aboutTitleEm: { ar: "دسمان", en: "Story" },
