@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { getAppData } from "@/lib/appData";
 import { isLang, t, type Lang } from "@/lib/i18n";
 import Icon from "@/components/Icon";
@@ -6,6 +8,23 @@ import Reveal from "@/components/Reveal";
 import JoinForm from "@/components/JoinForm";
 
 export const revalidate = 120;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang: langParam } = await params;
+  const lang = (isLang(langParam) ? langParam : "ar") as Lang;
+  const data = await getAppData();
+  return pageMetadata({
+    lang,
+    path: "/join",
+    title: lang === "ar" ? "انضم إلينا | مجموعة دسمان الكشفية" : "Join Us | Dasman Scout Group",
+    description: lang === "ar" ? "سجّل ابنك أو ابنتك في مجموعة دسمان الكشفية: أربع فرق من 8 إلى 15 سنة. النموذج لا يستغرق دقيقتين." : "Enrol your child in Dasman Scout Group: four troops for ages 8–15. The form takes two minutes.",
+    image: data.heroImages?.[0],
+  });
+}
 
 export default async function JoinPage({
   params,

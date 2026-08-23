@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Image from "next/image";
 import { getAppData } from "@/lib/appData";
 import { isLang, pick, t, type Lang } from "@/lib/i18n";
@@ -6,6 +8,23 @@ import Icon from "@/components/Icon";
 import Reveal from "@/components/Reveal";
 
 export const revalidate = 120;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang: langParam } = await params;
+  const lang = (isLang(langParam) ? langParam : "ar") as Lang;
+  const data = await getAppData();
+  return pageMetadata({
+    lang,
+    path: "/about",
+    title: lang === "ar" ? "من نحن | مجموعة دسمان الكشفية" : "About | Dasman Scout Group",
+    description: lang === "ar" ? "حكاية مجموعة دسمان الكشفية: رسالتنا ورؤيتنا وقيمنا وفريق القادة المؤهلين الذين يشرفون على فرقنا." : "The story of Dasman Scout Group: our mission, vision, values, and the qualified leaders behind our troops.",
+    image: data.heroImages?.[0],
+  });
+}
 
 export default async function AboutPage({
   params,

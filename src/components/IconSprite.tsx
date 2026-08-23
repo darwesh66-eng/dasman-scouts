@@ -12,6 +12,10 @@ export default function IconSprite() {
         <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><circle cx="16.5" cy="9" r="2.6"/><path d="M16 14.4c2.4.2 4.1 1.8 4.6 4.3"/></symbol>
         <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="14.5" r="5.5"/><path d="m12 12.2.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3.9-1.8zM8.5 9.5 5.5 3M15.5 9.5l3-6.5M12 9V3"/></symbol>
         <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6"/></symbol>
+        <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="18.5" r="2.6"/><path d="m8.3 10.7 7.4-3.9M8.3 13.3l7.4 3.9"/></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7 0l3-3a4 4 0 1 0-5.7-5.7l-1.3 1.3"/><path d="M14 10.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 1 0 5.7 5.7l1.3-1.3"/></symbol>
+        <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></symbol>
+        <symbol id="i-quote" viewBox="0 0 24 24"><path d="M9.5 6C6.5 7.4 5 9.8 5 13.2V18h5.4v-5.4H8.1c0-2 .8-3.4 2.4-4.2L9.5 6zM19 6c-3 1.4-4.5 3.8-4.5 7.2V18H20v-5.4h-2.4c0-2 .8-3.4 2.4-4.2L19 6z"/></symbol>
         <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></symbol>
         <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7l1.5-3h3L15 7"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
         <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5.5v13l11-6.5L7 5.5z" fill="currentColor" stroke="none"/></symbol>

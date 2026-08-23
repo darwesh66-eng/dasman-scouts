@@ -22,6 +22,7 @@ import {
   type Achievement,
   type HomeVideo,
   type Scout,
+  type Testimonial,
 } from "@/lib/appData";
 
 /* ══ helpers ══ */
@@ -125,6 +126,7 @@ const TABS = [
   { id: "gallery", label: "المعرض", icon: "i-camera" },
   { id: "videos", label: "الفيديوهات", icon: "i-play" },
   { id: "achievements", label: "الإنجازات", icon: "i-medal" },
+  { id: "testimonials", label: "آراء أولياء الأمور", icon: "i-quote" },
   { id: "requests", label: "طلبات الانضمام", icon: "i-chat" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
@@ -550,6 +552,29 @@ export default function AdminApp() {
                 <Field label="العنوان بالإنجليزية" value={a.titleEn} onChange={(v) => up({ titleEn: v })} />
                 <Field label="السنة" dir="ltr" value={a.year} onChange={(v) => up({ year: v })} />
               </div>
+            )}
+          />
+        )}
+
+        {tab === "testimonials" && (
+          <ListTab<Testimonial>
+            title="آراء أولياء الأمور"
+            sub="تظهر في الصفحة الرئيسية — أقوى وسيلة لإقناع الأهالي المترددين (تُعرض أول ثلاثة)"
+            items={data.testimonials}
+            onChange={(testimonials) => patch({ testimonials })}
+            create={() => ({ id: uid(), nameAr: "", nameEn: "", roleAr: "", roleEn: "", textAr: "", textEn: "" })}
+            titleOf={(x) => x.nameAr || "رأي جديد"}
+            render={(x, up) => (
+              <>
+                <div className="adm-grid2">
+                  <Field label="اسم ولي الأمر" value={x.nameAr ?? ""} onChange={(v) => up({ nameAr: v })} />
+                  <Field label="الاسم بالإنجليزية" value={x.nameEn ?? ""} onChange={(v) => up({ nameEn: v })} />
+                  <Field label="الصفة (مثال: ولي أمر شبل)" value={x.roleAr ?? ""} onChange={(v) => up({ roleAr: v })} />
+                  <Field label="الصفة بالإنجليزية" value={x.roleEn ?? ""} onChange={(v) => up({ roleEn: v })} />
+                </div>
+                <Field label="نص الرأي بالعربية" rows={3} value={x.textAr} onChange={(v) => up({ textAr: v })} />
+                <Field label="نص الرأي بالإنجليزية (اختياري)" rows={3} value={x.textEn ?? ""} onChange={(v) => up({ textEn: v })} />
+              </>
             )}
           />
         )}

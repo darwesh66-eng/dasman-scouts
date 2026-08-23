@@ -73,6 +73,15 @@ export interface HomeVideo {
   descriptionAr?: string;
   descriptionEn?: string;
 }
+export interface Testimonial {
+  id: string;
+  nameAr?: string;
+  nameEn?: string;
+  roleAr?: string;
+  roleEn?: string;
+  textAr: string;
+  textEn?: string;
+}
 export interface Scout {
   id: string;
   groupId: string;
@@ -99,6 +108,7 @@ export interface AppData {
   events: CalendarEvent[];
   achievements: Achievement[];
   homeVideos: HomeVideo[];
+  testimonials: Testimonial[];
 }
 
 export const defaultData: AppData = {
@@ -132,6 +142,7 @@ export const defaultData: AppData = {
   events: [],
   achievements: [],
   homeVideos: [],
+  testimonials: [],
 };
 
 /** Boys vs girls sections, in display order. */

@@ -92,6 +92,27 @@ const dict = {
   },
   newsCta: { ar: "كل الأخبار والفعاليات", en: "All news & events" },
 
+  // share / calendar / testimonials / instagram
+  shareLabel: { ar: "شارك", en: "Share" },
+  shareWhatsapp: { ar: "مشاركة عبر واتساب", en: "Share on WhatsApp" },
+  copyLink: { ar: "نسخ الرابط", en: "Copy link" },
+  copied: { ar: "تم النسخ", en: "Copied" },
+  addToCalendar: { ar: "أضف إلى التقويم", en: "Add to calendar" },
+  backToNews: { ar: "كل الأخبار", en: "All news" },
+  readMore: { ar: "اقرأ الخبر", en: "Read more" },
+  publishedOn: { ar: "نُشر في", en: "Published" },
+  testimonialsTitle: { ar: "ماذا يقول أولياء الأمور", en: "What Parents Say" },
+  testimonialsSub: {
+    ar: "تجارب حقيقية من عائلات دسمان الكشفية",
+    en: "Real experiences from Dasman scouting families",
+  },
+  igTitle: { ar: "تابعونا على إنستغرام", en: "Follow us on Instagram" },
+  igSub: {
+    ar: "صور وفيديوهات أنشطتنا أولاً بأول",
+    en: "Our activities in photos and videos, as they happen",
+  },
+  igCta: { ar: "زيارة الحساب", en: "Visit profile" },
+
   // about page
   aboutTitle1: { ar: "حكاية", en: "The Dasman" },
   aboutTitleEm: { ar: "دسمان", en: "Story" },

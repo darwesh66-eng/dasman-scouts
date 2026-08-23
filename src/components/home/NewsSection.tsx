@@ -34,6 +34,7 @@ export default function NewsSection({ lang, news }: { lang: Lang; news: NewsItem
         <div className="news-home-grid">
           {news.map((n, i) => (
             <Reveal key={n.id} className="news-card" delay={(i % 3) as 0 | 1 | 2}>
+              <Link href={`/${lang}/news/${n.id}`} className="news-card-link">
               {n.image && (
                 <Image
                   src={n.image}
@@ -48,7 +49,11 @@ export default function NewsSection({ lang, news }: { lang: Lang; news: NewsItem
                 <div className="date">{fmtDate(n.date, lang)}</div>
                 <h3>{pick(lang, n.titleAr, n.titleEn)}</h3>
                 <p>{pick(lang, n.contentAr, n.contentEn)?.slice(0, 130)}</p>
+                <span className="read-more">
+                  {t(lang, "readMore")} <Icon id="i-arrow" />
+                </span>
               </div>
+              </Link>
             </Reveal>
           ))}
         </div>

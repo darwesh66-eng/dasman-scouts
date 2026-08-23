@@ -1,11 +1,32 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Image from "next/image";
+import Link from "next/link";
+import AddToCalendar from "@/components/AddToCalendar";
 import { getAppData } from "@/lib/appData";
 import { isLang, pick, t, type Lang } from "@/lib/i18n";
 import Icon from "@/components/Icon";
 import Reveal from "@/components/Reveal";
 
 export const revalidate = 120;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang: langParam } = await params;
+  const lang = (isLang(langParam) ? langParam : "ar") as Lang;
+  const data = await getAppData();
+  return pageMetadata({
+    lang,
+    path: "/news",
+    title: lang === "ar" ? "الأخبار والفعاليات | مجموعة دسمان الكشفية" : "News & Events | Dasman Scout Group",
+    description: lang === "ar" ? "آخر أخبار مجموعة دسمان الكشفية وجدول الفعاليات والمخيمات القادمة." : "Latest news from Dasman Scout Group plus the schedule of upcoming events and camps.",
+    image: data.heroImages?.[0],
+  });
+}
 
 function fmtDate(d: string, lang: Lang) {
   try {
@@ -54,6 +75,7 @@ export default async function NewsPage({
         {featured ? (
           <>
             <Reveal className="news-feat">
+              <Link href={`/${lang}/news/${featured.id}`} className="news-feat-link">
               <Image
                 src={featured.image || "https://picsum.photos/seed/dasman-news/900/620"}
                 alt={pick(lang, featured.titleAr, featured.titleEn)}
@@ -66,12 +88,17 @@ export default async function NewsPage({
                 <div className="date">{fmtDate(featured.date, lang)}</div>
                 <h3>{pick(lang, featured.titleAr, featured.titleEn)}</h3>
                 <p>{pick(lang, featured.contentAr, featured.contentEn)?.slice(0, 220)}</p>
+                <span className="read-more">
+                  {t(lang, "readMore")} <Icon id="i-arrow" />
+                </span>
               </div>
+              </Link>
             </Reveal>
             {rest.length > 0 && (
               <div className="news-grid">
                 {rest.slice(0, 4).map((n, i) => (
                   <Reveal key={n.id} className="news-card" delay={(i % 2) as 0 | 1}>
+                    <Link href={`/${lang}/news/${n.id}`} className="news-card-link">
                     {n.image && (
                       <Image
                         src={n.image}
@@ -87,6 +114,7 @@ export default async function NewsPage({
                       <h4>{pick(lang, n.titleAr, n.titleEn)}</h4>
                       <p>{pick(lang, n.contentAr, n.contentEn)?.slice(0, 140)}</p>
                     </div>
+                    </Link>
                   </Reveal>
                 ))}
               </div>
@@ -130,11 +158,14 @@ export default async function NewsPage({
                         </div>
                       )}
                     </div>
-                    {group && (
-                      <span className="tag">
-                        <Icon id="i-fleur" /> {pick(lang, group.nameAr, group.nameEn)}
-                      </span>
-                    )}
+                    <div className="event-actions">
+                      {group && (
+                        <span className="tag">
+                          <Icon id="i-fleur" /> {pick(lang, group.nameAr, group.nameEn)}
+                        </span>
+                      )}
+                      <AddToCalendar lang={lang} eventId={ev.id} />
+                    </div>
                   </Reveal>
                 );
               })

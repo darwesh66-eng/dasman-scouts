@@ -7,6 +7,7 @@ import IconSprite from "@/components/IconSprite";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ContactFab from "@/components/ContactFab";
+import { Analytics } from "@vercel/analytics/next";
 import "../../globals.css";
 
 const cairo = Cairo({
@@ -78,6 +79,7 @@ export default async function SiteLayout({
         </div>
         <Footer lang={l} />
         <ContactFab lang={l} whatsapp={data.whatsapp} />
+        <Analytics />
       </body>
     </html>
   );
