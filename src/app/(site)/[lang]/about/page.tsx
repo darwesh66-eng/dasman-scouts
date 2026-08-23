@@ -22,7 +22,6 @@ export async function generateMetadata({
     path: "/about",
     title: lang === "ar" ? "من نحن | مجموعة دسمان الكشفية" : "About | Dasman Scout Group",
     description: lang === "ar" ? "حكاية مجموعة دسمان الكشفية: رسالتنا ورؤيتنا وقيمنا وفريق القادة المؤهلين الذين يشرفون على فرقنا." : "The story of Dasman Scout Group: our mission, vision, values, and the qualified leaders behind our troops.",
-    image: data.heroImages?.[0],
   });
 }
 

@@ -24,7 +24,6 @@ export async function generateMetadata({
     path: "/news",
     title: lang === "ar" ? "الأخبار والفعاليات | مجموعة دسمان الكشفية" : "News & Events | Dasman Scout Group",
     description: lang === "ar" ? "آخر أخبار مجموعة دسمان الكشفية وجدول الفعاليات والمخيمات القادمة." : "Latest news from Dasman Scout Group plus the schedule of upcoming events and camps.",
-    image: data.heroImages?.[0],
   });
 }
 

@@ -22,7 +22,6 @@ export async function generateMetadata({
     path: "/join",
     title: lang === "ar" ? "انضم إلينا | مجموعة دسمان الكشفية" : "Join Us | Dasman Scout Group",
     description: lang === "ar" ? "سجّل ابنك أو ابنتك في مجموعة دسمان الكشفية: أربع فرق من 8 إلى 15 سنة. النموذج لا يستغرق دقيقتين." : "Enrol your child in Dasman Scout Group: four troops for ages 8–15. The form takes two minutes.",
-    image: data.heroImages?.[0],
   });
 }
 

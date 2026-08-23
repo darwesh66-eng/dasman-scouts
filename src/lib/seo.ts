@@ -31,7 +31,7 @@ export function pageMetadata({
   publishedTime?: string;
 }): Metadata {
   const url = abs(`/${lang}${path}`);
-  const ogImage = image ? abs(image) : abs("/og.png");
+  const ogImage = image ? abs(image) : abs("/og.jpg");
 
   return {
     title,

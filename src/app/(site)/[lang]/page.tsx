@@ -31,13 +31,12 @@ export async function generateMetadata({
     path: "",
     title:
       lang === "ar"
-        ? "مجموعة دسمان الكشفية | فرق كشفية للبنين والبنات في الكويت"
-        : "Dasman Scout Group | Scout troops for boys and girls in Kuwait",
+        ? "مجموعة دسمان الكشفية"
+        : "Dasman Scout Group",
     description:
       lang === "ar"
-        ? "مجموعة دسمان الكشفية بمدرسة دسمان ثنائية اللغة — أربع فرق كشفية للبنين والبنات من 8 إلى 15 سنة، بإشراف قادة مؤهلين. سجّل ابنك أو ابنتك اليوم."
-        : "Dasman Scout Group at Dasman Bilingual School — four scout troops for boys and girls aged 8–15, led by qualified leaders. Enrol your child today.",
-    image: data.heroImages?.[0],
+        ? "الموقع الرسمي لمجموعة دسمان الكشفية بمدرسة دسمان ثنائية اللغة — أنشطة ومخيمات وبرامج تربوية بإشراف قادة مؤهلين."
+        : "The official site of Dasman Scout Group at Dasman Bilingual School — activities, camps and educational programmes led by qualified leaders.",
   });
 }
 

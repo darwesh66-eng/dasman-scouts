@@ -21,7 +21,6 @@ export async function generateMetadata({
     path: "/gallery",
     title: lang === "ar" ? "المعرض | مجموعة دسمان الكشفية" : "Gallery | Dasman Scout Group",
     description: lang === "ar" ? "صور من مخيمات ورحلات وأنشطة مجموعة دسمان الكشفية في الكويت." : "Photos from the camps, trips and activities of Dasman Scout Group in Kuwait.",
-    image: data.heroImages?.[0],
   });
 }
 
