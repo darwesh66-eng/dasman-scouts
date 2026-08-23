@@ -82,6 +82,12 @@ export interface Testimonial {
   textAr: string;
   textEn?: string;
 }
+export interface IgPost {
+  id: string;
+  url: string;
+  captionAr?: string;
+  captionEn?: string;
+}
 export interface Scout {
   id: string;
   groupId: string;
@@ -109,6 +115,7 @@ export interface AppData {
   achievements: Achievement[];
   homeVideos: HomeVideo[];
   testimonials: Testimonial[];
+  igPosts: IgPost[];
 }
 
 export const defaultData: AppData = {
@@ -143,6 +150,7 @@ export const defaultData: AppData = {
   achievements: [],
   homeVideos: [],
   testimonials: [],
+  igPosts: [],
 };
 
 /** Boys vs girls sections, in display order. */

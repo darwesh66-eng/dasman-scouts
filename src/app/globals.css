@@ -638,3 +638,24 @@ fieldset.field>legend .req{color:var(--ember)}
   .ig-inner{flex-direction:column;text-align:center;padding:30px 24px;gap:16px}
   .ig-copy p{font-size:13.5px}
 }
+
+/* ── Instagram: hand-picked post embeds + follow band ── */
+.ig-sec{padding-block:100px 90px}
+.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:56px}
+.ig-grid.few{grid-template-columns:repeat(auto-fit,minmax(300px,360px));justify-content:center}
+.ig-card{background:#fff;border:1px solid rgba(27,58,107,.1);border-radius:var(--r);overflow:hidden;
+  box-shadow:0 24px 50px -30px rgba(27,58,107,.35);
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+.ig-card:hover{transform:translateY(-4px);box-shadow:0 34px 64px -30px rgba(27,58,107,.45)}
+.ig-frame{position:relative;height:560px;background:var(--sand)}
+.ig-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
+.ig-cap{display:flex;align-items:center;gap:9px;padding:16px 18px;font-size:13.5px;font-weight:800;
+  color:var(--navy-deep);text-decoration:none;border-top:1px solid rgba(27,58,107,.1);
+  transition:color .3s var(--ease)}
+.ig-cap svg{width:16px;height:16px;color:#a63a7d;flex-shrink:0}
+.ig-cap:hover{color:#a63a7d}
+@media(max-width:960px){.ig-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){
+  .ig-grid,.ig-grid.few{grid-template-columns:1fr;max-width:420px;margin-inline:auto}
+  .ig-frame{height:520px}
+}

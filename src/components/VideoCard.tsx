@@ -5,19 +5,17 @@ import Image from "next/image";
 import Icon from "@/components/Icon";
 import type { HomeVideo } from "@/lib/appData";
 import { pick, t, type Lang } from "@/lib/i18n";
+import { igEmbedUrl } from "@/lib/instagram";
 
 function ytId(url: string) {
   return url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/)?.[1];
 }
-function igEmbed(url: string) {
-  const m = url.match(/instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);
-  return m ? `https://www.instagram.com/${m[1]}/${m[2]}/embed/` : null;
-}
+
 
 export default function VideoCard({ lang, video }: { lang: Lang; video: HomeVideo }) {
   const [playing, setPlaying] = useState(false);
   const yid = video.type === "youtube" ? ytId(video.url) : null;
-  const ig = video.type === "instagram" ? igEmbed(video.url) : null;
+  const ig = video.type === "instagram" ? igEmbedUrl(video.url) : null;
   const thumb =
     yid != null
       ? `https://img.youtube.com/vi/${yid}/hqdefault.jpg`

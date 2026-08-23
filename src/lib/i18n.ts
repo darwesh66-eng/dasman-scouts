@@ -112,6 +112,12 @@ const dict = {
     en: "Our activities in photos and videos, as they happen",
   },
   igCta: { ar: "زيارة الحساب", en: "Visit profile" },
+  igPostsTitle: { ar: "من إنستغرام", en: "From Instagram" },
+  igPostsSub: {
+    ar: "مختارات من آخر منشوراتنا",
+    en: "A selection of our latest posts",
+  },
+  igViewPost: { ar: "شاهد المنشور على إنستغرام", en: "View post on Instagram" },
 
   // about page
   aboutTitle1: { ar: "حكاية", en: "The Dasman" },

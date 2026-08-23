@@ -23,6 +23,7 @@ import {
   type HomeVideo,
   type Scout,
   type Testimonial,
+  type IgPost,
 } from "@/lib/appData";
 
 /* ══ helpers ══ */
@@ -127,6 +128,7 @@ const TABS = [
   { id: "videos", label: "الفيديوهات", icon: "i-play" },
   { id: "achievements", label: "الإنجازات", icon: "i-medal" },
   { id: "testimonials", label: "آراء أولياء الأمور", icon: "i-quote" },
+  { id: "igposts", label: "منشورات إنستغرام", icon: "i-instagram" },
   { id: "requests", label: "طلبات الانضمام", icon: "i-chat" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
@@ -574,6 +576,32 @@ export default function AdminApp() {
                 </div>
                 <Field label="نص الرأي بالعربية" rows={3} value={x.textAr} onChange={(v) => up({ textAr: v })} />
                 <Field label="نص الرأي بالإنجليزية (اختياري)" rows={3} value={x.textEn ?? ""} onChange={(v) => up({ textEn: v })} />
+              </>
+            )}
+          />
+        )}
+
+        {tab === "igposts" && (
+          <ListTab<IgPost>
+            title="منشورات إنستغرام"
+            sub="الصق رابط المنشور من إنستغرام — يظهر في الصفحة الرئيسية مباشرة (حتى ستة منشورات). لا يحتاج أي ربط أو مفاتيح."
+            items={data.igPosts}
+            onChange={(igPosts) => patch({ igPosts })}
+            create={() => ({ id: uid(), url: "", captionAr: "", captionEn: "" })}
+            titleOf={(x) => x.captionAr || x.url || "منشور جديد"}
+            render={(x, up) => (
+              <>
+                <Field
+                  label="رابط المنشور"
+                  dir="ltr"
+                  value={x.url}
+                  onChange={(v) => up({ url: v })}
+                  placeholder="https://www.instagram.com/p/XXXXXXXXX/"
+                />
+                <div className="adm-grid2">
+                  <Field label="وصف مختصر بالعربية" value={x.captionAr ?? ""} onChange={(v) => up({ captionAr: v })} />
+                  <Field label="الوصف بالإنجليزية" value={x.captionEn ?? ""} onChange={(v) => up({ captionEn: v })} />
+                </div>
               </>
             )}
           />

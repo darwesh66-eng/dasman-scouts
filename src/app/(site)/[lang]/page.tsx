@@ -9,7 +9,7 @@ import TrailsSection from "@/components/home/TrailsSection";
 import AboutSection from "@/components/home/AboutSection";
 import NewsSection from "@/components/home/NewsSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
-import InstagramBand from "@/components/home/InstagramBand";
+import InstagramSection from "@/components/home/InstagramSection";
 import JsonLd from "@/components/JsonLd";
 import { abs, pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
@@ -179,7 +179,7 @@ export default async function HomePage({
 
       <TestimonialsSection lang={lang} items={data.testimonials} />
 
-      <InstagramBand lang={lang} instagram={data.instagram} />
+      <InstagramSection lang={lang} posts={data.igPosts} instagram={data.instagram} />
 
       <section className="join-sec wrap" id="join">
         <Reveal className="join-panel">
